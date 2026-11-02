@@ -30,14 +30,552 @@ while not camera do
 	task.wait()
 	camera = workspace.CurrentCamera
 end
-local mouse = player:GetMouse()
+
+-- LANGUAGE (English / Русский). Every text of the menu goes through L(), so the language can be
+-- switched live: L translates English -> Russian, or Russian -> English when English is chosen.
+local Lang = { code = "EN", hooks = {} }
+do
+	local ok, loc = pcall(function() return Players.LocalPlayer.LocaleId end)
+	if ok and type(loc) == "string" then
+		local l = string.lower(loc):sub(1, 2)
+		if l == "ru" or l == "uk" or l == "be" then Lang.code = "RU" end
+	end
+end
+local L
+do -- BLOCK
+local RU = {
+	[" auto buttons"] = " кнопок авто",
+	[" cleared"] = " очищен",
+	[" could not be loaded. Using a similar font"] = " не загрузился. Взят похожий шрифт",
+	[" needs executor file functions. Using a similar font"] = " требует файловые функции экзекутора. Взят похожий шрифт",
+	[" removed"] = " удалена",
+	[" to hide / show"] = ", чтобы скрыть / показать",
+	[" to open"] = ", чтобы открыть",
+	[" was moved from "] = " перенесена с ",
+	["+   Add auto button"] = "+   Добавить кнопку авто",
+	["A small cross in the middle of the screen"] = "Маленький крестик в центре экрана",
+	["Ability keys (other than WASD / Space)"] = "Клавиши умений (кроме WASD / Пробела)",
+	["Accent color"] = "Акцентный цвет",
+	["Account ID"] = "ID аккаунта",
+	["Add to custom colors"] = "Добавить в свои цвета",
+	["Aim"] = "Прицел",
+	["Aim radius"] = "Радиус прицела",
+	["Aimbot"] = "Аимбот",
+	["Aimbot, triggerbot and click hitbox also work on NPCs"] = "Аимбот, триггербот и большой хитбокс работают и на NPC",
+	["Aimbot, triggerbot and click hitbox ignore your friends"] = "Аимбот, триггербот и большой хитбокс игнорируют друзей",
+	["All"] = "Все",
+	["All effects were reset"] = "Все эффекты сброшены",
+	["Always"] = "Всегда",
+	["Ambient color"] = "Цвет окружения",
+	["Anti-AFK"] = "Анти-АФК",
+	["Anti-void"] = "Анти-бездна",
+	["Appear as a random Anon name, hide your Roblox name"] = "Случайное имя Anon, ваше имя Roblox скрыто",
+	["Appearance"] = "Внешний вид",
+	["Armenia"] = "Армения",
+	["Arrived"] = "Прибыл",
+	["Assist"] = "Помощь",
+	["Attacking"] = "Атакую",
+	["Auto"] = "Авто",
+	["Auto "] = "Авто ",
+	["Auto %d"] = "Авто %d",
+	["Auto Drop / Store"] = "Авто выбросить / убрать",
+	["Auto Drop fruits"] = "Авто Drop фруктов",
+	["Auto Farm Factory"] = "Авто фарм фабрики",
+	["Auto Farm Pirates"] = "Авто фарм пиратов",
+	["Auto Farm Pumpkin"] = "Авто фарм тыкв",
+	["Auto Farm Pumpkin NPCs"] = "Авто фарм NPC тыкв",
+	["Auto Store fruits"] = "Авто Store фруктов",
+	["Auto buttons (Spawn: once after respawn  ·  Always: repeats)"] = "Кнопки авто (Спавн: один раз после респавна  ·  Всегда: повторяет)",
+	["Auto click"] = "Автоклик",
+	["Auto equip weapon"] = "Авто экипировка оружия",
+	["Auto farm"] = "Авто фарм",
+	["Auto farm PumpkinPatch"] = "Авто фарм PumpkinPatch",
+	["Auto farm started"] = "Авто фарм запущен",
+	["Auto jump out"] = "Авто выход (прыжок)",
+	["Auto-fires your Tool when aiming at a target"] = "Сам стреляет инструментом при наведении на цель",
+	["Auto: this key can't be simulated here. Bind it to a menu action"] = "Авто: эту клавишу нельзя симулировать. Привяжи её к действию меню",
+	["BASIC COLORS"] = "БАЗОВЫЕ ЦВЕТА",
+	["Background color 1"] = "Цвет фона 1",
+	["Background color 2"] = "Цвет фона 2",
+	["Background image"] = "Фоновая картинка",
+	["Background image ID"] = "ID фоновой картинки",
+	["Background image failed to load. Check the ID"] = "Фон не загрузился. Проверь ID",
+	["Beams"] = "Лучи",
+	["Big hitbox"] = "Большой хитбокс",
+	["Bigger click area: clicks near a target still hit it"] = "Больше зона клика: клик рядом с целью всё равно попадает",
+	["Blend softness"] = "Мягкость перехода",
+	["Bloom (glow)"] = "Блум (свечение)",
+	["Bloom intensity"] = "Сила блума",
+	["Bloom on"] = "Блум включён",
+	["Bloom size"] = "Размер блума",
+	["Both"] = "Оба",
+	["Boxes + health bar"] = "Боксы + полоска HP",
+	["Bright things glow"] = "Яркие объекты светятся",
+	["Bunny hop"] = "Банни-хоп",
+	["Bypass"] = "Обход",
+	["CUSTOM COLORS"] = "СВОИ ЦВЕТА",
+	["Camera"] = "Камера",
+	["Camera follows the recorded view"] = "Камера повторяет записанный вид",
+	["Cancels ragdoll, stun, freeze, anchoring and slow effects on you"] = "Убирает рагдолл, стан, заморозку, якорь и замедление на вас",
+	["Center"] = "Центр",
+	["Change how fast you fall"] = "Меняет скорость падения",
+	["Changes only what you see. \"Game\" = untouched. If something looks wrong press Reset all effects."] = "Меняет только то, что видите вы. «Игра» = без изменений. Если что-то выглядит странно, нажмите «Сбросить все эффекты».",
+	["Changes the color of shadows and indirect light"] = "Меняет цвет теней и непрямого света",
+	["Chat"] = "Чат",
+	["Chat anonymous"] = "Анонимный чат",
+	["Chat nickname"] = "Ник в чате",
+	["Chat popups"] = "Уведомления чата",
+	["Chat room"] = "Комната чата",
+	["Chat: message was not sent"] = "Чат: сообщение не отправлено",
+	["Chat: sending needs HTTP support"] = "Чат: для отправки нужен HTTP",
+	["Chat: this executor has no HTTP / WebSocket support"] = "Чат: в этом экзекуторе нет HTTP / WebSocket",
+	["Chest"] = "Сундук",
+	["Chest ESP"] = "ESP сундуков",
+	["Chest color"] = "Цвет сундуков",
+	["Chest distance"] = "Дистанция сундуков",
+	["Chest through walls"] = "Сундуки сквозь стены",
+	["Clear chat window"] = "Очистить окно чата",
+	["Clear slot"] = "Очистить слот",
+	["Click hitbox radius"] = "Радиус хитбокса клика",
+	["Clicking"] = "Кликаю",
+	["Clicks in the game itself (works without a Tool)"] = "Кликает прямо в игре (работает без инструмента)",
+	["Clicks per second"] = "Кликов в секунду",
+	["Cloud save failed"] = "Облачное сохранение не удалось",
+	["Color"] = "Цвет",
+	["Color 1 share"] = "Доля цвета 1",
+	["Color filter"] = "Цветовой фильтр",
+	["Color filter on"] = "Цветовой фильтр вкл.",
+	["Colored body outline"] = "Цветной контур тела",
+	["Colors"] = "Цвета",
+	["Combat"] = "Бой",
+	["Combat extras"] = "Доп. бой",
+	["Compact mode"] = "Компактный режим",
+	["Connecting..."] = "Подключение...",
+	["Content scale"] = "Масштаб содержимого",
+	["Corner"] = "Угол",
+	["Crop"] = "Обрезать",
+	["Cursor"] = "Курсор",
+	["Cursor anchor"] = "Якорь курсора",
+	["Cursor image ID"] = "ID картинки курсора",
+	["Cursor image failed to load. Check the ID"] = "Курсор не загрузился. Проверь ID",
+	["Cursor size"] = "Размер курсора",
+	["Custom ambient light"] = "Свой окружающий свет",
+	["Custom crosshair"] = "Свой прицел-крест",
+	["Custom cursor"] = "Свой курсор",
+	["Custom fog color"] = "Свой цвет тумана",
+	["Custom gravity"] = "Своя гравитация",
+	["Custom time of day"] = "Своё время суток",
+	["Default"] = "По умолчанию",
+	["Disables blur, bloom, color grading"] = "Отключает блюр, блум, цветокоррекцию",
+	["Door"] = "Дверь",
+	["Drop / Store delay"] = "Задержка Drop / Store",
+	["Drop all fruits now"] = "Выбросить все фрукты сейчас",
+	["Drop remote name"] = "Имя remote для Drop",
+	["Dropped: "] = "Выброшено: ",
+	["Drops the fruits you carry, one after another"] = "Выбрасывает фрукты, что вы несёте, по одному",
+	["ESP"] = "ESP",
+	["ESP and radar colors"] = "Цвета ESP и радара",
+	["ESP through walls"] = "ESP сквозь стены",
+	["English"] = "English",
+	["Enter a music ID first"] = "Сначала введи ID музыки",
+	["Equips the first tool from your backpack while farming"] = "Берёт первый инструмент из рюкзака во время фарма",
+	["FPS / ping panel"] = "Панель FPS / пинг",
+	["Factory"] = "Фабрика",
+	["Factory hover height"] = "Высота над фабрикой",
+	["Factory not found (get closer)"] = "Фабрика не найдена (подлети ближе)",
+	["Farm"] = "Фарм",
+	["Farm clicks per second"] = "Кликов фарма в секунду",
+	["Farm nearest NPCs"] = "Фарм ближайших NPC",
+	["Farm speed"] = "Скорость фарма",
+	["Farm status"] = "Статус фарма",
+	["Faster walking (WalkSpeed / CFrame)"] = "Быстрая ходьба (WalkSpeed / CFrame)",
+	["Field of view"] = "Угол обзора (FOV)",
+	["Filter brightness"] = "Яркость фильтра",
+	["Filter contrast"] = "Контраст фильтра",
+	["Filter saturation"] = "Насыщенность фильтра",
+	["Filter tint"] = "Оттенок фильтра",
+	["Fire"] = "Огонь",
+	["Fire / smoke / sparkles"] = "Огонь / дым / искры",
+	["Fit"] = "Вписать",
+	["Flies to every Pumpkin and clicks it (Tween / Bypass: Farm tab)"] = "Летит к каждой Pumpkin и кликает (Tween / Bypass: вкладка Фарм)",
+	["Flies to every PumpkinPatch and clicks it"] = "Летит к каждой PumpkinPatch и кликает",
+	["Flies to the nearest NPC and hits it"] = "Летит к ближайшему NPC и бьёт его",
+	["Flies to the pirate base and kills the nearest NPCs around it"] = "Летит на базу пиратов и убивает ближайших NPC вокруг",
+	["Flight"] = "Полёт",
+	["Flight cancelled"] = "Полёт отменён",
+	["Fly"] = "Летать",
+	["Fly boost (hold)"] = "Ускорение полёта (удерж.)",
+	["Fly speed"] = "Скорость полёта",
+	["Fly through walls"] = "Полёт сквозь стены",
+	["Fly where you look. Space / E up, Q / Ctrl down"] = "Летит куда смотришь. Пробел / E вверх, Q / Ctrl вниз",
+	["Flying to"] = "Лечу к",
+	["Flying to "] = "Лечу к ",
+	["Flying to the pirate base"] = "Лечу на базу пиратов",
+	["Fog color"] = "Цвет тумана",
+	["Font "] = "Шрифт ",
+	["Fonts"] = "Шрифты",
+	["Forest"] = "Лес",
+	["Forgotten Script loaded. Press "] = "Forgotten Script загружен. Нажми ",
+	["Freecam"] = "Свободная камера",
+	["Freecam speed"] = "Скорость камеры",
+	["Friend color"] = "Цвет друзей",
+	["Fruit"] = "Фрукты",
+	["Fruit ESP"] = "ESP фруктов",
+	["Fruit color"] = "Цвет фруктов",
+	["Fruit distance"] = "Дистанция фруктов",
+	["Fruit search word"] = "Слово для поиска фруктов",
+	["Fruit through walls"] = "Фрукты сквозь стены",
+	["Fruits found"] = "Найдено фруктов",
+	["Fruits in backpack"] = "Фруктов в рюкзаке",
+	["Fruits in the world"] = "Фрукты в мире",
+	["Fullbright"] = "Полная яркость",
+	["Game"] = "Игра",
+	["Game blocks simulated keys"] = "Игра блокирует симуляцию клавиш",
+	["Game effects (VFX)"] = "Эффекты игры (VFX)",
+	["Game font"] = "Шрифт игры",
+	["Global chat"] = "Глобальный чат",
+	["Gradient angle"] = "Угол градиента",
+	["Gradient background"] = "Градиентный фон",
+	["Gravity"] = "Гравитация",
+	["Halloween"] = "Хэллоуин",
+	["Halloween Door"] = "Дверь Хэллоуина",
+	["Halloween ESP"] = "ESP Хэллоуина",
+	["HalloweenDoor ESP"] = "ESP HalloweenDoor",
+	["HalloweenDoor color"] = "Цвет HalloweenDoor",
+	["HalloweenDoor distance"] = "Дистанция HalloweenDoor",
+	["HalloweenDoor through walls"] = "HalloweenDoor сквозь стены",
+	["Head"] = "Голова",
+	["Hex code"] = "HEX код",
+	["Hide GUI"] = "Скрыть GUI",
+	["Hide opened chests"] = "Скрывать открытые сундуки",
+	["Hide title and dot"] = "Скрыть название и точку",
+	["Hides the game and Roblox interface (this menu stays)"] = "Скрывает интерфейс игры и Roblox (это меню остаётся)",
+	["High jump"] = "Высокий прыжок",
+	["High jump (jump power)"] = "Высокий прыжок (сила)",
+	["Highlight"] = "Подсветка",
+	["Hitting the factory"] = "Бью фабрику",
+	["Hold RMB to aim"] = "Удерживать ПКМ для прицела",
+	["Hold Space to keep jumping"] = "Держи Пробел, чтобы прыгать",
+	["Hold the zoom key to zoom in"] = "Удерживай клавишу зума",
+	["ID or 123, 456"] = "ID или 123, 456",
+	["Idle"] = "Ожидание",
+	["Ignore targets behind walls"] = "Игнорировать цели за стенами",
+	["Ignores objects that are invisible (already collected)"] = "Игнорирует невидимые объекты (уже собранные)",
+	["Image fit"] = "Вписывание картинки",
+	["Image opacity"] = "Непрозрачность картинки",
+	["In this slot"] = "В этом слоте",
+	["Infinite jump"] = "Бесконечный прыжок",
+	["Info"] = "Инфо",
+	["Invisibility"] = "Невидимость",
+	["Invisibility amount"] = "Степень невидимости",
+	["Invisible floor: Space = up, Left Ctrl = down"] = "Невидимый пол: Пробел = вверх, Левый Ctrl = вниз",
+	["Items lying now"] = "Предметов лежит сейчас",
+	["Items on the server"] = "Предметы на сервере",
+	["Join the chat (off = nothing is sent or received)"] = "Войти в чат (выкл = ничего не отправляется и не принимается)",
+	["Jump again in mid-air"] = "Прыжок ещё раз в воздухе",
+	["Jump power"] = "Сила прыжка",
+	["Jumps off a seat or out of an NPC dialogue (cafe) by itself"] = "Сам спрыгивает с сиденья или выходит из диалога NPC (кафе)",
+	["Keybinds"] = "Клавиши",
+	["Kills the NPCs that appear after a pumpkin"] = "Убивает NPC, что появляются после тыквы",
+	["Language"] = "Язык",
+	["Light and fog colors"] = "Цвета света и тумана",
+	["Lighting"] = "Освещение",
+	["Lights"] = "Свет",
+	["Lines from the screen bottom to targets"] = "Линии от низа экрана к целям",
+	["Loading font "] = "Загрузка шрифта ",
+	["Lock panel positions"] = "Закрепить панели",
+	["Locks the camera onto targets"] = "Наводит камеру на цели",
+	["Look at target"] = "Смотреть на цель",
+	["Loop pause"] = "Пауза цикла",
+	["Loop replay"] = "Повтор записи",
+	["Makes your character transparent (on your screen)"] = "Делает персонажа прозрачным (на вашем экране)",
+	["Marks every chest in the world (name contains \"chest\")"] = "Отмечает все сундуки в мире (в имени есть \"chest\")",
+	["Marks every object named \"HalloweenDoor\""] = "Отмечает все объекты \"HalloweenDoor\"",
+	["Marks every object named \"Pumpkin\""] = "Отмечает все объекты \"Pumpkin\"",
+	["Marks every object named \"PumpkinPatch\""] = "Отмечает все объекты \"PumpkinPatch\"",
+	["Marks everything with the search word in its name"] = "Отмечает всё, где в имени есть слово поиска",
+	["Master switch for all markers"] = "Главный переключатель всех меток",
+	["Max distance"] = "Макс. дистанция",
+	["Maximum "] = "Максимум ",
+	["Menu"] = "Меню",
+	["Menu font"] = "Шрифт меню",
+	["Menu hidden. Press "] = "Меню скрыто. Нажми ",
+	["Messages"] = "Сообщения",
+	["Midnight"] = "Полночь",
+	["Mini-map of nearby targets (drag it where you want)"] = "Мини-карта целей рядом (перетащи куда нужно)",
+	["Misc"] = "Разное",
+	["Mode"] = "Режим",
+	["Movement"] = "Движение",
+	["Movement and attack"] = "Движение и атака",
+	["Movement mode"] = "Режим движения",
+	["Movement recorder"] = "Запись движений",
+	["Music"] = "Музыка",
+	["Music IDs"] = "ID музыки",
+	["Music failed to load. Check the ID"] = "Музыка не загрузилась. Проверь ID",
+	["Music repeat"] = "Повтор музыки",
+	["Music shuffle"] = "Случайный порядок",
+	["Music speed"] = "Скорость музыки",
+	["Music volume"] = "Громкость музыки",
+	["NPC"] = "NPC",
+	["NPC color"] = "Цвет NPC",
+	["NPC distance"] = "Дистанция NPC",
+	["NPC hover height"] = "Высота над NPC",
+	["NPC name filter"] = "Фильтр имён NPC",
+	["NPC search range"] = "Радиус поиска NPC",
+	["Name, health, distance"] = "Имя, HP, дистанция",
+	["Near"] = "Рядом",
+	["Nearest NPC name filter"] = "Фильтр имён ближайших NPC",
+	["Nearest NPCs"] = "Ближайшие NPC",
+	["Next"] = "След.",
+	["No HTTP in this executor"] = "В экзекуторе нет HTTP",
+	["No camera shake"] = "Без тряски камеры",
+	["No character"] = "Нет персонажа",
+	["No collision with walls while flying"] = "Нет столкновений со стенами в полёте",
+	["No connection, retrying..."] = "Нет связи, повтор...",
+	["No fog"] = "Без тумана",
+	["No fruits found"] = "Фруктов не найдено",
+	["No fruits in backpack"] = "В рюкзаке нет фруктов",
+	["No other players"] = "Других игроков нет",
+	["No post effects"] = "Без пост-эффектов",
+	["No stun"] = "Без стана",
+	["No targets found"] = "Целей не найдено",
+	["Noclip"] = "Ноуклип",
+	["None"] = "Нет",
+	["Nothing is lying around"] = "Ничего не лежит",
+	["Now playing"] = "Сейчас играет",
+	["Ocean"] = "Океан",
+	["Off"] = "Выкл",
+	["Off = chest markers are hidden behind walls"] = "Выкл = метки сундуков скрыты за стенами",
+	["Off = markers are hidden behind walls"] = "Выкл = метки скрыты за стенами",
+	["Off = replay from where you stand"] = "Выкл = повтор с того места, где стоишь",
+	["On screen (drag the panels with the mouse)"] = "На экране (панели можно перетаскивать мышью)",
+	["One"] = "Один",
+	["Online (checking every 6 s)"] = "Онлайн (проверка раз в 6 с)",
+	["Online (live)"] = "Онлайн (живой)",
+	["Opened chest leaves the ESP, shows again when it respawns"] = "Открытый сундук пропадает из ESP и появляется снова после респавна",
+	["Other"] = "Другое",
+	["Panels transparency"] = "Прозрачность панелей",
+	["Particles"] = "Частицы",
+	["Paste image ID"] = "Вставь ID картинки",
+	["Pause"] = "Пауза",
+	["Ping"] = "Пинг",
+	["Pirate name filter"] = "Фильтр имён пиратов",
+	["Pirate radius"] = "Радиус пиратов",
+	["Pirates"] = "Пираты",
+	["Play"] = "Играть",
+	["Play slot"] = "Воспроизвести слот",
+	["Player color"] = "Цвет игроков",
+	["Players"] = "Игроки",
+	["Players and NPC ESP"] = "ESP игроков и NPC",
+	["Playing"] = "Воспроизведение",
+	["Prediction"] = "Упреждение",
+	["Press a key..."] = "Нажми клавишу...",
+	["Prev"] = "Назад",
+	["Profile"] = "Профиль",
+	["Public chat of everyone who uses this script in the same room. Anyone can read it, so never share personal data."] = "Общий чат всех, кто использует скрипт в одной комнате. Его может прочитать любой, не пишите личные данные.",
+	["Pumpkin"] = "Тыква",
+	["Pumpkin ESP"] = "ESP тыкв",
+	["Pumpkin Patch"] = "Тыквенная грядка",
+	["Pumpkin color"] = "Цвет тыкв",
+	["Pumpkin distance"] = "Дистанция тыкв",
+	["Pumpkin search range"] = "Радиус поиска тыкв",
+	["Pumpkin through walls"] = "Тыквы сквозь стены",
+	["PumpkinPatch ESP"] = "ESP PumpkinPatch",
+	["PumpkinPatch color"] = "Цвет PumpkinPatch",
+	["PumpkinPatch distance"] = "Дистанция PumpkinPatch",
+	["PumpkinPatch through walls"] = "PumpkinPatch сквозь стены",
+	["Radar"] = "Радар",
+	["Radar range"] = "Дальность радара",
+	["Rainbow"] = "Радуга",
+	["Random next track (list of IDs)"] = "Случайный следующий трек (список ID)",
+	["Record"] = "Запись",
+	["Record key presses"] = "Записывать нажатия клавиш",
+	["Record start/stop"] = "Запись старт/стоп",
+	["Recording"] = "Идёт запись",
+	["Recording too short"] = "Запись слишком короткая",
+	["Recording... do your moves"] = "Идёт запись... делай движения",
+	["Rejoin server"] = "Перезайти на сервер",
+	["Removes darkness and shadows"] = "Убирает темноту и тени",
+	["Removes screen shake (hits, explosions, effects)"] = "Убирает тряску экрана (удары, взрывы, эффекты)",
+	["Removes the name and the dot from the title bar"] = "Убирает название и точку из заголовка",
+	["Repeat interval"] = "Интервал повтора",
+	["Repeat until you stop it"] = "Повторять, пока не остановишь",
+	["Replaces the mouse cursor with your image"] = "Заменяет курсор мыши вашей картинкой",
+	["Replay camera"] = "Камера повтора",
+	["Replay finished"] = "Повтор закончен",
+	["Replay options"] = "Настройки повтора",
+	["Replay speed"] = "Скорость повтора",
+	["Replay start/stop"] = "Повтор старт/стоп",
+	["Replay started"] = "Повтор запущен",
+	["Reset all effects"] = "Сбросить все эффекты",
+	["Reset character"] = "Сбросить персонажа",
+	["Reset keybinds"] = "Сбросить клавиши",
+	["Reset panel positions"] = "Сбросить позиции панелей",
+	["Reset text colors"] = "Сбросить цвета текста",
+	["Resume"] = "Продолжить",
+	["Return to last safe spot if you fall"] = "Возврат в безопасное место при падении",
+	["Roblox water and the part \"WaterBase-Plane\""] = "Вода Roblox и часть \"WaterBase-Plane\"",
+	["Root"] = "Корень",
+	["Same name = same room"] = "Одинаковое имя = одна комната",
+	["Save failed, see Output"] = "Не сохранилось, смотри Output",
+	["Save settings now"] = "Сохранить настройки сейчас",
+	["Save: load failed, see Output"] = "Сохранение: загрузка не удалась, смотри Output",
+	["Save: storage is not ready"] = "Сохранение: хранилище не готово",
+	["Saved to slot "] = "Сохранено в слот ",
+	["Scan workspace again"] = "Сканировать workspace снова",
+	["Scanning workspace..."] = "Сканирую workspace...",
+	["Screen filters"] = "Фильтры экрана",
+	["Scroll out much further in third person"] = "Позволяет отдалять камеру намного дальше от третьего лица",
+	["Search in workspace"] = "Поиск в workspace",
+	["Secondary text color"] = "Второстепенный цвет текста",
+	["Send"] = "Отправить",
+	["Server"] = "Сервер",
+	["Server ID"] = "ID сервера",
+	["Server time (uptime)"] = "Время сервера (аптайм)",
+	["Server time, players, ping, FPS"] = "Время сервера, игроки, пинг, FPS",
+	["Server uptime"] = "Аптайм сервера",
+	["Session"] = "Сессия",
+	["Settings"] = "Настройки",
+	["Settings saved"] = "Настройки сохранены",
+	["Show NPCs"] = "Показывать NPC",
+	["Show new messages as notifications while the chat is closed"] = "Показывать новые сообщения уведомлениями, пока чат закрыт",
+	["Shows your picture behind the menu (by ID)"] = "Показывает вашу картинку за меню (по ID)",
+	["Size"] = "Размер",
+	["Skip friends"] = "Пропускать друзей",
+	["Skip hidden objects"] = "Пропускать скрытые объекты",
+	["Skip time after visit"] = "Пропуск после визита",
+	["Slot"] = "Слот",
+	["Slot "] = "Слот ",
+	["Slow down a little"] = "Не так быстро",
+	["Small one-line FPS, ping and players panel"] = "Маленькая панель: FPS, пинг и игроки",
+	["Smaller controls, more on screen"] = "Мелкие элементы, больше места",
+	["SmileFactory > Core > Part: flies to it and hits it"] = "SmileFactory > Core > Part: летит к нему и бьёт",
+	["Smoke"] = "Дым",
+	["Smoothness"] = "Плавность",
+	["Sparkles"] = "Искры",
+	["Spawn"] = "Спавн",
+	["Spawn delay"] = "Задержка спавна",
+	["Speed"] = "Скорость",
+	["Speed mode"] = "Режим скорости",
+	["Spin"] = "Вращение",
+	["Spin speed"] = "Скорость вращения",
+	["Start from recorded place"] = "Начать с записанного места",
+	["Start recording"] = "Начать запись",
+	["Stats on screen"] = "Статистика на экране",
+	["Status"] = "Статус",
+	["Stop"] = "Стоп",
+	["Stop recording"] = "Остановить запись",
+	["Stop replay"] = "Остановить повтор",
+	["Stop view"] = "Выйти из просмотра",
+	["Stops the panels, radar and menu button from being dragged"] = "Запрещает перетаскивать панели, радар и кнопку меню",
+	["Store all fruits now"] = "Убрать все фрукты сейчас",
+	["Store remote name"] = "Имя remote для Store",
+	["Stored: "] = "Убрано: ",
+	["Stores the fruits you carry, one after another"] = "Убирает фрукты, что вы несёте, по одному",
+	["Stretch"] = "Растянуть",
+	["Stronger jump power"] = "Сильнее прыжок",
+	["Sunset"] = "Закат",
+	["TP"] = "ТП",
+	["TP to nearest"] = "ТП к ближайшему",
+	["Target NPCs"] = "Цели NPC",
+	["Target not found"] = "Цель не найдена",
+	["Target part"] = "Часть цели",
+	["Teleported to "] = "Телепорт к ",
+	["Text color"] = "Цвет текста",
+	["That key opens the menu"] = "Эта клавиша открывает меню",
+	["This slot is empty"] = "Этот слот пуст",
+	["Time"] = "Время",
+	["Time at each object"] = "Время у каждого объекта",
+	["Timing"] = "Тайминг",
+	["Tints and recolors the whole picture"] = "Тонирует и перекрашивает всю картинку",
+	["Toggle menu"] = "Открыть/закрыть меню",
+	["Too many buttons were created, rejoin to reset"] = "Слишком много кнопок, перезайди для сброса",
+	["Too many requests, waiting..."] = "Слишком много запросов, жду...",
+	["Torso"] = "Торс",
+	["Tracers"] = "Трейсеры",
+	["Trails"] = "Следы",
+	["Triggerbot"] = "Триггербот",
+	["Turn on Global chat first"] = "Сначала включи глобальный чат",
+	["Turns the camera so the cursor points at the target (the cursor never moves)"] = "Поворачивает камеру, чтобы курсор смотрел на цель (сам курсор не двигается)",
+	["Tween"] = "Плавно",
+	["Two-color gradient behind the menu"] = "Двухцветный градиент за меню",
+	["Unload menu"] = "Выгрузить меню",
+	["Unlock camera distance"] = "Разблокировать дистанцию камеры",
+	["Used if not anonymous"] = "Используется, если не анонимно",
+	["Using this script: session "] = "В скрипте: сессия ",
+	["View"] = "Смотреть",
+	["Visuals"] = "Визуал",
+	["WASD + Q/E to move, hold RMB to look, Shift = fast"] = "WASD + Q/E движение, ПКМ осмотр, Shift = быстро",
+	["Waiting for NPCs"] = "Жду NPC",
+	["Waiting for objects"] = "Жду объекты",
+	["Waiting for pirates"] = "Жду пиратов",
+	["Walk on air"] = "Ходьба по воздуху",
+	["Walk on water"] = "Ходьба по воде",
+	["Walk speed"] = "Скорость ходьбы",
+	["Walk through walls"] = "Ходьба сквозь стены",
+	["Wall check"] = "Проверка стен",
+	["World"] = "Мир",
+	["Write a message..."] = "Напиши сообщение...",
+	["Your time"] = "Ваше время",
+	["Your time on server"] = "Ваше время на сервере",
+	["Zoom"] = "Зум",
+	["Zoom (hold)"] = "Зум (удерживать)",
+	["Zoom FOV"] = "FOV зума",
+	["actions"] = "действий",
+	["amount"] = "количество",
+	["brightness"] = "яркость",
+	["color"] = "цвет",
+	["empty"] = "пусто",
+	["empty = any NPC"] = "пусто = любой NPC",
+	["empty = auto find"] = "пусто = авто поиск",
+	["length"] = "длина",
+	["mode"] = "режим",
+	["names, comma separated"] = "имена через запятую",
+	["nearest "] = "ближайший: ",
+	["no key"] = "нет клавиши",
+	["range"] = "дальность",
+	["recolor"] = "перекраска",
+	["size"] = "размер",
+	["total "] = "всего ",
+	["width"] = "ширина",
+	["word in the name"] = "слово в имени",
+}
+local EN = {}
+for k, v in pairs(RU) do EN[v] = k end
+
+function L(s)
+	if type(s) ~= "string" or s == "" then return s end
+	local map = Lang.code == "RU" and RU or EN
+	local hit = map[s]
+	if hit then return hit end
+	-- leading / trailing spaces
+	local lead, core, trail = s:match("^(%s*)(.-)(%s*)$")
+	if core ~= "" and (lead ~= "" or trail ~= "") then
+		local h = map[core]
+		if h then return lead .. h .. trail end
+	end
+	-- "Players (3)"
+	local base, num = s:match("^(.-)(%s%(%d+%))$")
+	if base then
+		local h = map[base]
+		if h then return h .. num end
+	end
+	-- "Particles: size"
+	local a, b = s:match("^(.-): (.+)$")
+	if a then
+		local ha, hb = map[a], map[b]
+		if ha or hb then return (ha or a) .. ": " .. (hb or b) end
+	end
+	return s
+end
+end -- BLOCK
 
 -- KEYBINDS (values are KeyCode names, "None" = unbound)
 local BindDefaults = {
 	Menu = "RightShift", Fly = "F", Noclip = "N", Aimbot = "V",
 	Speed = "None", ESP = "None", Freecam = "None",
 	BigHitbox = "None", AutoClick = "None", NoStun = "None", HideGui = "None",
-	Zoom = "C", ClickTP = "LeftControl", FlyBoost = "LeftShift",
+	Zoom = "C", FlyBoost = "LeftShift",
 	Jump = "None", Invis = "None",
 	RecToggle = "None", PlayToggle = "None",
 }
@@ -51,7 +589,7 @@ local BindList = {
 	{ "HideGui", "Hide GUI" },
 	{ "Jump", "High jump (jump power)" },
 	{ "Invis", "Invisibility" },
-	{ "Zoom", "Zoom (hold)" }, { "ClickTP", "Click teleport key" }, { "FlyBoost", "Fly boost (hold)" },
+	{ "Zoom", "Zoom (hold)" }, { "FlyBoost", "Fly boost (hold)" },
 	{ "RecToggle", "Record start/stop" }, { "PlayToggle", "Replay start/stop" },
 }
 
@@ -110,6 +648,7 @@ local function sameColor(a, b)
 	return math.abs(a.R - b.R) < 0.004 and math.abs(a.G - b.G) < 0.004 and math.abs(a.B - b.B) < 0.004
 end
 
+-- every text of the menu goes through L(), so the language can be switched live
 local function new(class, props, parent)
 	local o = Instance.new(class)
 	for k, v in pairs(props) do
@@ -117,6 +656,21 @@ local function new(class, props, parent)
 		if typeof(v) == "Color3" and sameColor(v, Theme.Accent) then
 			table.insert(accentTracked, { o = o, p = k })
 		end
+	end
+	if class == "TextLabel" or class == "TextButton" then
+		local t = o.Text
+		if t ~= "" then
+			local n = L(t)
+			if n ~= t then o.Text = n end
+		end
+		o:GetPropertyChangedSignal("Text"):Connect(function()
+			local cur = o.Text
+			local n = L(cur)
+			if n ~= cur then o.Text = n end
+		end)
+	elseif class == "TextBox" then
+		local p = o.PlaceholderText
+		if p ~= "" then o.PlaceholderText = L(p) end
 	end
 	o.Parent = parent
 	return o
@@ -172,7 +726,6 @@ local State = {
 	Noclip = false,
 	Spin = false, SpinSpeed = 20,
 	AntiVoid = false,
-	ClickTP = false,
 	AntiAFK = true,
 	Invis = false, InvisValue = 60,
 
@@ -180,7 +733,7 @@ local State = {
 	AimPart = "Head", AimWall = true, AimNPC = true, AimSkipFriends = false,
 	Trigger = false,
 	BigHitbox = false, BigHitboxSize = 90,
-	AutoClick = false, ClickCPS = 10, NoStun = false,
+	AutoClick = false, ClickCPS = 20, NoStun = false,
 
 	ESP = false, ESPChams = true, ESPBox = true, ESPName = true, ESPTracer = false, ESPDist = 1000, ESPNPC = true,
 	ESPWall = true,
@@ -189,20 +742,30 @@ local State = {
 	StatsHud = false, HudLock = false,
 	Cursor = false, CursorSize = 32, CursorId = "", CursorAnchor = "Center",
 
-	-- world object ESP (Chest + Halloween), each with its own distance and wall switch
+	-- world object ESP, each with its own distance and wall switch
 	ChestESP = false, ChestDist = 500, ChestWall = true, ChestHideOpened = true,
 	PumpkinESP = false, PumpkinDist = 500, PumpkinWall = true,
 	PatchESP = false, PatchDist = 500, PatchWall = true,
 	DoorESP = false, DoorDist = 500, DoorWall = true,
+	FruitESP = false, FruitDist = 1000, FruitWall = true,
 
-	-- auto farm (Halloween)
-	FarmPumpkin = false, FarmPatch = false, FarmSpeed = 120, FarmRange = 5000,
-	FarmStay = 3, FarmCool = 30, FarmCPS = 8, FarmLook = true, FarmSkipHidden = false,
-	FarmTween = false, FarmBypass = false, FarmNPC = false, FarmNPCRange = 250, FarmNPCHeight = 6,
-	FarmNPCName = "lantern", FarmEquip = true,
+	-- fruits: auto drop / auto store
+	FruitDrop = false, FruitStore = false, FruitInterval = 800,
+
+	-- auto farm shared engine
+	FarmBypass = false, FarmSpeed = 150, FarmCPS = 30, FarmLook = true, FarmEquip = true,
+	FarmNPCHeight = 6,
+	-- halloween
+	FarmPumpkin = false, FarmPatch = false, FarmRange = 5000,
+	FarmStay = 3, FarmCool = 30, FarmSkipHidden = false,
+	FarmNPC = false, FarmNPCRange = 250, FarmNPCName = "lantern",
+	-- nearest NPCs / factory / pirates
+	NearNPC = false, NearRange = 300, NearName = "",
+	FactoryFarm = false, FactoryHeight = 6,
+	PirateFarm = false, PirateRange = 1000, PirateName = "",
 	AutoJump = false,
 
-	TitleHide = false,
+	TitleHide = false, Lang = Lang.code,
 
 	BgGrad = false, BgAngle = 45, BgMid = 50, BgSoft = 100,
 
@@ -228,16 +791,15 @@ local State = {
 }
 
 -- VFX settings: one block per effect type (Par = particles, Tr = trails, Be = beams,
--- Mi = fire / smoke / sparkles / explosions, Li = lights)
+-- Mi = fire / smoke / sparkles, Li = lights). Only safe values: Game / Off, amount, size, color.
 for _, k in ipairs({ "Par", "Tr", "Be", "Mi", "Li" }) do
 	State["Vfx" .. k .. "Mode"] = "Game"
 	State["Vfx" .. k .. "Amt"] = 100
 	State["Vfx" .. k .. "Size"] = 100
 	State["Vfx" .. k .. "Rec"] = "Off"
-	State["Vfx" .. k .. "Boost"] = 0
 end
 
--- ESP / radar colors (changed from the Visuals tab)
+-- ESP / radar colors (changed from the menu)
 local espColors = {
 	Player = Color3.fromRGB(232, 96, 110),
 	NPC = Color3.fromRGB(222, 176, 80),
@@ -246,6 +808,7 @@ local espColors = {
 	Pumpkin = Color3.fromRGB(255, 140, 30),
 	Patch = Color3.fromRGB(255, 170, 70),
 	Door = Color3.fromRGB(176, 96, 255),
+	Fruit = Color3.fromRGB(110, 230, 120),
 }
 
 local Defaults = { WalkSpeed = 16, JumpPower = 50 }
@@ -264,10 +827,13 @@ local Ext = {
 	},
 	posErr = Vector2.zero, -- difference between where a Position is set and where it really appears
 	title = {},
+	fruitWord = "fruit",
+	PirateCF = CFrame.new(-5551.09424, 310.088989, -2985.65991, 0.927179396, 0, 0.374617696, 0, 1, 0, -0.374617696, 0, 0.927179396),
 	noSave = {
 		Freecam = true, ["Hide GUI"] = true,
-		["Auto Farm Pumpkin [ Tween ]"] = true, ["Auto Farm Pumpkin [ Bypass ]"] = true,
-		["Auto Farm Pumpkin NPCs"] = true, ["Auto farm PumpkinPatch"] = true,
+		["Auto Farm Pumpkin"] = true, ["Auto Farm Pumpkin NPCs"] = true, ["Auto farm PumpkinPatch"] = true,
+		["Farm nearest NPCs"] = true, ["Auto Farm Factory"] = true, ["Auto Farm Pirates"] = true,
+		["Auto Drop fruits"] = true, ["Auto Store fruits"] = true,
 	},
 	Farm = { active = false, black = setmetatable({}, { __mode = "k" }), nearT = 0, clickAcc = 0 },
 }
@@ -364,6 +930,20 @@ function Ext.screen()
 	local s = gui.AbsoluteSize
 	if s.X < 50 or s.Y < 50 then s = camera.ViewportSize end
 	return s
+end
+
+-- switch the language of everything that is already on screen
+function Ext.applyLang()
+	for _, o in ipairs(gui:GetDescendants()) do
+		if o:IsA("TextLabel") or o:IsA("TextButton") then
+			local n = L(o.Text)
+			if n ~= o.Text then o.Text = n end
+		elseif o:IsA("TextBox") and o.PlaceholderText ~= "" then
+			local n = L(o.PlaceholderText)
+			if n ~= o.PlaceholderText then o.PlaceholderText = n end
+		end
+	end
+	for _, h in ipairs(Lang.hooks) do pcall(h) end
 end
 
 local overlay = new("Frame", {
@@ -968,7 +1548,7 @@ local function setVisible(v)
 end
 closeBtn.MouseButton1Click:Connect(function()
 	setVisible(false)
-	notify("Menu hidden. Press " .. Binds.Menu .. " to open")
+	notify(L("Menu hidden. Press ") .. Binds.Menu .. L(" to open"))
 end)
 
 -- menu button (three bars). Drag it anywhere; a short click opens / closes the menu
@@ -1126,7 +1706,7 @@ local function addSection(parent, text)
 	return new("TextLabel", {
 		Size = UDim2.new(1, 0, 0, 24),
 		BackgroundTransparency = 1,
-		Text = string.upper(text),
+		Text = text,
 		TextXAlignment = Enum.TextXAlignment.Left,
 		TextYAlignment = Enum.TextYAlignment.Bottom,
 		Font = Enum.Font.GothamBold,
@@ -1162,6 +1742,7 @@ local function addToggle(parent, text, default, callback, desc)
 		Size = UDim2.new(1, -68, 0, desc and 18 or height),
 		Text = text,
 		TextXAlignment = Enum.TextXAlignment.Left,
+		TextTruncate = Enum.TextTruncate.AtEnd,
 		Font = Enum.Font.GothamMedium,
 		TextSize = 13,
 		TextColor3 = Theme.Text,
@@ -1173,6 +1754,7 @@ local function addToggle(parent, text, default, callback, desc)
 			Size = UDim2.new(1, -68, 0, 14),
 			Text = desc,
 			TextXAlignment = Enum.TextXAlignment.Left,
+			TextTruncate = Enum.TextTruncate.AtEnd,
 			Font = Enum.Font.Gotham,
 			TextSize = 11,
 			TextColor3 = Theme.SubText,
@@ -1226,6 +1808,7 @@ local function addSlider(parent, text, min, max, default, callback, suffix)
 		Size = UDim2.new(1, -100, 0, 18),
 		Text = text,
 		TextXAlignment = Enum.TextXAlignment.Left,
+		TextTruncate = Enum.TextTruncate.AtEnd,
 		Font = Enum.Font.GothamMedium,
 		TextSize = 13,
 		TextColor3 = Theme.Text,
@@ -1335,6 +1918,7 @@ local function addSegmented(parent, text, options, default, callback)
 		Size = UDim2.new(1, -24, 0, 18),
 		Text = text,
 		TextXAlignment = Enum.TextXAlignment.Left,
+		TextTruncate = Enum.TextTruncate.AtEnd,
 		Font = Enum.Font.GothamMedium,
 		TextSize = 13,
 		TextColor3 = Theme.Text,
@@ -1382,61 +1966,101 @@ local function addSegmented(parent, text, options, default, callback)
 	select(default)
 end
 
-local function addChoice(parent, text, options, default, callback)
-	local cols = 3
-	local rows = math.ceil(#options / cols)
-	local row = baseRow(parent, 34 + rows * 26)
+-- compact drop-down list: options = { { id, label }, ... }
+local function addDropdown(parent, text, options, default, callback)
+	local holder = new("Frame", {
+		Size = UDim2.new(1, 0, 0, 0),
+		AutomaticSize = Enum.AutomaticSize.Y,
+		BackgroundTransparency = 1,
+		LayoutOrder = nextOrder(parent),
+	}, parent)
+	new("UIListLayout", { Padding = UDim.new(0, 4), SortOrder = Enum.SortOrder.LayoutOrder }, holder)
+	local row = baseRow(holder, 34)
 	new("TextLabel", {
 		BackgroundTransparency = 1,
-		Position = UDim2.fromOffset(12, 6),
-		Size = UDim2.new(1, -24, 0, 18),
+		Position = UDim2.fromOffset(12, 0),
+		Size = UDim2.new(0.5, -12, 1, 0),
 		Text = text,
 		TextXAlignment = Enum.TextXAlignment.Left,
+		TextTruncate = Enum.TextTruncate.AtEnd,
 		Font = Enum.Font.GothamMedium,
 		TextSize = 13,
 		TextColor3 = Theme.Text,
 	}, row)
-	local holder = new("Frame", {
-		Position = UDim2.fromOffset(12, 30),
-		Size = UDim2.new(1, -24, 0, rows * 26),
-		BackgroundTransparency = 1,
+	local btn = new("TextButton", {
+		AnchorPoint = Vector2.new(1, 0.5),
+		Position = UDim2.new(1, -8, 0.5, 0),
+		Size = UDim2.new(0.5, -8, 0, 24),
+		BackgroundColor3 = Theme.Bg,
+		Font = Enum.Font.GothamMedium,
+		TextSize = 12,
+		TextColor3 = Theme.Text,
+		AutoButtonColor = false,
+		BorderSizePixel = 0,
+		Text = "",
 	}, row)
-	new("UIGridLayout", {
-		CellSize = UDim2.new(1 / cols, -4, 0, 22),
-		CellPadding = UDim2.fromOffset(4, 4),
-		SortOrder = Enum.SortOrder.LayoutOrder,
-	}, holder)
+	corner(btn, 6)
+	outline(btn)
 
-	local buttons = {}
+	local shown = math.min(#options, 6)
+	local list = new("ScrollingFrame", {
+		Size = UDim2.new(1, 0, 0, shown * 26 + 8),
+		BackgroundColor3 = Theme.Panel,
+		BorderSizePixel = 0,
+		ScrollBarThickness = 3,
+		ScrollBarImageColor3 = Theme.Off,
+		AutomaticCanvasSize = Enum.AutomaticSize.Y,
+		CanvasSize = UDim2.new(),
+		Visible = false,
+		LayoutOrder = 2,
+	}, holder)
+	corner(list, 8)
+	outline(list)
+	new("UIListLayout", { Padding = UDim.new(0, 2), SortOrder = Enum.SortOrder.LayoutOrder }, list)
+	new("UIPadding", {
+		PaddingTop = UDim.new(0, 4), PaddingBottom = UDim.new(0, 4),
+		PaddingLeft = UDim.new(0, 4), PaddingRight = UDim.new(0, 8),
+	}, list)
+
+	local labels, optBtns = {}, {}
 	local current = default
-	local function select(name)
-		current = name
-		for n, b in pairs(buttons) do
-			local active = n == name
-			b.BackgroundColor3 = active and Theme.Accent or Theme.Bg
-			b.TextColor3 = active and Color3.new(1, 1, 1) or Theme.SubText
+	local function render()
+		btn.Text = (labels[current] or tostring(current)) .. "   v"
+		for id, b in pairs(optBtns) do
+			b.TextColor3 = id == current and Theme.Accent or Theme.Text
 		end
-		callback(name)
+	end
+	local function select(id)
+		current = id
+		render()
+		list.Visible = false
+		callback(id)
 		changed()
 	end
-	for i, name in ipairs(options) do
+	for i, o in ipairs(options) do
+		labels[o[1]] = o[2]
 		local b = new("TextButton", {
-			BackgroundColor3 = Theme.Bg,
-			Text = name,
+			Size = UDim2.new(1, 0, 0, 24),
+			BackgroundColor3 = Theme.Item,
+			Text = o[2],
 			Font = Enum.Font.GothamMedium,
-			TextSize = 11,
-			TextColor3 = Theme.SubText,
+			TextSize = 12,
+			TextColor3 = Theme.Text,
 			AutoButtonColor = false,
 			BorderSizePixel = 0,
 			LayoutOrder = i,
-		}, holder)
-		corner(b, 6)
-		buttons[name] = b
-		b.MouseButton1Click:Connect(function() select(name) end)
+		}, list)
+		corner(b, 5)
+		optBtns[o[1]] = b
+		b.MouseEnter:Connect(function() tween(b, 0.1, { BackgroundColor3 = Theme.ItemHover }) end)
+		b.MouseLeave:Connect(function() tween(b, 0.1, { BackgroundColor3 = Theme.Item }) end)
+		b.MouseButton1Click:Connect(function() select(o[1]) end)
 	end
+	btn.MouseButton1Click:Connect(function() list.Visible = not list.Visible end)
+
 	registry[text] = {
 		get = function() return current end,
-		set = function(n) if buttons[n] then select(n) end end,
+		set = function(id) if labels[id] then select(id) end end,
 	}
 	select(default)
 end
@@ -1514,6 +2138,7 @@ local function addInput(parent, text, default, callback, placeholder)
 		Size = UDim2.new(0.5, -12, 1, 0),
 		Text = text,
 		TextXAlignment = Enum.TextXAlignment.Left,
+		TextTruncate = Enum.TextTruncate.AtEnd,
 		Font = Enum.Font.GothamMedium,
 		TextSize = 13,
 		TextColor3 = Theme.Text,
@@ -1556,6 +2181,7 @@ local function addInfo(parent, text)
 		Size = UDim2.new(0.5, -12, 1, 0),
 		Text = text,
 		TextXAlignment = Enum.TextXAlignment.Left,
+		TextTruncate = Enum.TextTruncate.AtEnd,
 		Font = Enum.Font.GothamMedium,
 		TextSize = 13,
 		TextColor3 = Theme.Text,
@@ -1938,6 +2564,7 @@ local function addKeybind(parent, text, store, id, default, noClear)
 		Size = UDim2.new(0.5, -12, 1, 0),
 		Text = text,
 		TextXAlignment = Enum.TextXAlignment.Left,
+		TextTruncate = Enum.TextTruncate.AtEnd,
 		Font = Enum.Font.GothamMedium,
 		TextSize = 13,
 		TextColor3 = Theme.Text,
@@ -1980,7 +2607,7 @@ local function addKeybind(parent, text, store, id, default, noClear)
 						return
 					end
 					setter("None")
-					notify(v .. " was moved from " .. other, 2)
+					notify(v .. L(" was moved from ") .. other, 2)
 				end
 			end
 		end
@@ -2026,9 +2653,7 @@ function Ext.refreshNoclip()
 	end
 end
 
--- FLY (new: moves the character with CFrame, no body movers)
--- The flight position is tracked separately, so gravity never makes you sink, speed changes are
--- smoothed, and you lean a little in the direction you fly.
+-- FLY (moves the character with CFrame, no body movers)
 -- Move with WASD in the direction the camera looks. Space / E = up, Q / Left Ctrl = down.
 local stopFly, startFly, flyTo
 do -- BLOCK
@@ -2142,7 +2767,7 @@ function flyTo(fn, name)
 	end
 	if not State.Fly and toggles.Fly then toggles.Fly.Set(true) end
 	flyTarget = fn
-	notify("Flying to " .. name)
+	notify(L("Flying to ") .. name)
 end
 
 end -- BLOCK
@@ -2330,10 +2955,27 @@ local function triggerStep()
 	local victim = Players:GetPlayerFromCharacter(model)
 	if not victim and not State.AimNPC then return end
 	if victim and State.AimSkipFriends and isFriend(victim) then return end
-	if os.clock() - lastShot > 0.1 then
+	if os.clock() - lastShot > 0.05 then
 		lastShot = os.clock()
 		tool:Activate()
 	end
+end
+
+-- turns the camera just enough so that the point under the cursor becomes the given world position.
+-- The cursor itself never moves, so clicks at the current mouse place hit the target.
+function Ext.pointCursorAt(pos)
+	local mp = UIS:GetMouseLocation()
+	local cf = camera.CFrame
+	local ray = camera:ViewportPointToRay(mp.X, mp.Y)
+	local from = ray.Direction.Unit
+	local diff = pos - cf.Position
+	if diff.Magnitude < 0.01 then return end
+	local to = diff.Unit
+	local axis = from:Cross(to)
+	if axis.Magnitude < 1e-4 then return end
+	local angle = math.acos(math.clamp(from:Dot(to), -1, 1))
+	local rot = CFrame.fromAxisAngle(axis.Unit, angle)
+	camera.CFrame = CFrame.new(cf.Position) * rot * (cf - cf.Position)
 end
 
 -- BIG CLICK HITBOX: the camera is turned just enough so the cursor points at a nearby target
@@ -2356,16 +2998,7 @@ function clickAssist()
 		end
 	end
 	if not bestPart then return end
-
-	local cf = camera.CFrame
-	local ray = camera:ViewportPointToRay(mp.X, mp.Y)
-	local from = ray.Direction.Unit
-	local to = (bestPart.Position - cf.Position).Unit
-	local axis = from:Cross(to)
-	if axis.Magnitude < 1e-4 then return end
-	local angle = math.acos(math.clamp(from:Dot(to), -1, 1))
-	local rot = CFrame.fromAxisAngle(axis.Unit, angle)
-	camera.CFrame = CFrame.new(cf.Position) * rot * (cf - cf.Position)
+	Ext.pointCursorAt(bestPart.Position)
 end
 
 local fovNow = camera.FieldOfView
@@ -2551,36 +3184,52 @@ function updateESP()
 end
 end -- BLOCK
 
--- WORLD OBJECT ESP: Chest + Halloween objects (Pumpkin, PumpkinPatch, HalloweenDoor)
+-- WORLD OBJECT ESP: Chest, Fruit (any name that contains the search word) + Halloween objects.
 -- Each kind has its own on / off switch, its own distance (up to 100000 m) and its own
--- "see through walls" switch. A chest disappears from the ESP when it is opened and shows again
--- when it is closed / respawned (see chestOpened for how an opened chest is recognized).
+-- "see through walls" switch. The same scan also finds "SmileFactory" (used by the auto farm).
 do -- BLOCK
-local CAT_LABEL = { Chest = "Chest", Pumpkin = "Pumpkin", Patch = "Pumpkin Patch", Door = "Halloween Door" }
-local EXACT = { pumpkin = "Pumpkin", pumpkinpatch = "Patch", halloweendoor = "Door" }
-local found = { Chest = {}, Pumpkin = {}, Patch = {}, Door = {} }
+local CAT_LABEL = { Chest = "Chest", Pumpkin = "Pumpkin", Patch = "Pumpkin Patch", Door = "Halloween Door", Fruit = "Fruit" }
+local EXACT = { pumpkin = "Pumpkin", pumpkinpatch = "Patch", halloweendoor = "Door", smilefactory = "Factory" }
+local found = { Chest = {}, Pumpkin = {}, Patch = {}, Door = {}, Fruit = {}, Factory = {} }
 local espObjs = {}
 
 local function classify(d)
-	if not (d:IsA("Model") or d:IsA("BasePart")) then return nil end
+	local isTool = d:IsA("Tool")
+	if not (isTool or d:IsA("Model") or d:IsA("BasePart")) then return nil end
 	local ln = string.lower(d.Name)
-	local c = EXACT[ln]
-	if c then
-		local p = d.Parent
-		if p and p ~= workspace and p:IsA("Model") and string.lower(p.Name) == ln then return nil end
-		return c
-	end
-	if string.find(ln, "chest", 1, true) then
-		if string.find(ln, "plate", 1, true) or string.find(ln, "guard", 1, true) then return nil end
-		local p = d.Parent
-		if p and p ~= workspace and p:IsA("Model") and string.find(string.lower(p.Name), "chest", 1, true) then
-			return nil
+
+	if not isTool then
+		local c = EXACT[ln]
+		if c then
+			local p = d.Parent
+			if p and p ~= workspace and p:IsA("Model") and string.lower(p.Name) == ln then return nil end
+			return c
 		end
+		if string.find(ln, "chest", 1, true) then
+			if string.find(ln, "plate", 1, true) or string.find(ln, "guard", 1, true) then return nil end
+			local p = d.Parent
+			if p and p ~= workspace and p:IsA("Model") and string.find(string.lower(p.Name), "chest", 1, true) then
+				return nil
+			end
+			if d:IsA("Model") and d:FindFirstChildOfClass("Humanoid") then return nil end
+			local owner = d:FindFirstAncestorOfClass("Model")
+			if owner and owner:FindFirstChildOfClass("Humanoid") then return nil end
+			if d:FindFirstAncestorOfClass("Accessory") or d:FindFirstAncestorOfClass("Tool") then return nil end
+			return "Chest"
+		end
+	end
+
+	local w = Ext.fruitWord
+	if w ~= "" and string.find(ln, w, 1, true) then
+		local p = d.Parent
+		if p and p ~= workspace and string.find(string.lower(p.Name), w, 1, true) then return nil end
 		if d:IsA("Model") and d:FindFirstChildOfClass("Humanoid") then return nil end
 		local owner = d:FindFirstAncestorOfClass("Model")
 		if owner and owner:FindFirstChildOfClass("Humanoid") then return nil end
-		if d:FindFirstAncestorOfClass("Accessory") or d:FindFirstAncestorOfClass("Tool") then return nil end
-		return "Chest"
+		if d:FindFirstAncestorOfClass("Accessory") then return nil end
+		if not isTool and d:FindFirstAncestorOfClass("Tool") then return nil end
+		if d:IsDescendantOf(camera) then return nil end
+		return "Fruit"
 	end
 	return nil
 end
@@ -2601,15 +3250,32 @@ connect(workspace.DescendantAdded, function(d)
 	task.defer(track, d)
 end)
 
+-- scan the whole world again for fruits (after the search word was changed)
+function Ext.rescanFruit()
+	table.clear(found.Fruit)
+	task.spawn(function()
+		for i, d in ipairs(workspace:GetDescendants()) do
+			if not running then return end
+			if classify(d) == "Fruit" then found.Fruit[d] = true end
+			if i % 4000 == 0 then task.wait() end
+		end
+	end)
+end
+
 local function partOf(inst)
 	if inst:IsA("BasePart") then return inst end
-	return inst.PrimaryPart or inst:FindFirstChildWhichIsA("BasePart", true)
+	if inst:IsA("Model") and inst.PrimaryPart then return inst.PrimaryPart end
+	local h = inst:FindFirstChild("Handle")
+	if h and h:IsA("BasePart") then return h end
+	return inst:FindFirstChildWhichIsA("BasePart", true)
 end
 
 local function posOf(inst)
 	if inst:IsA("BasePart") then return inst.Position end
-	local ok, cf = pcall(inst.GetPivot, inst)
-	if ok then return cf.Position end
+	if inst:IsA("Model") then
+		local ok, cf = pcall(inst.GetPivot, inst)
+		if ok then return cf.Position end
+	end
 	local p = partOf(inst)
 	return p and p.Position
 end
@@ -2784,16 +3450,18 @@ local function updateObjs()
 		if e then
 			e.tag.AlwaysOnTop = wall
 			e.label.TextColor3 = col
-			e.label.Text = CAT_LABEL[it.cat] .. "\n" .. math.floor(it.dist) .. " m"
+			local title = it.cat == "Fruit" and it.inst.Name or L(CAT_LABEL[it.cat])
+			e.label.Text = title .. "\n" .. math.floor(it.dist) .. " m"
 			if hlCount < 28 then
 				hlCount += 1
 				if not e.hl then
+					local ad = (it.inst:IsA("Model") or it.inst:IsA("BasePart")) and it.inst or partOf(it.inst)
 					e.hl = new("Highlight", {
 						FillColor = col,
 						OutlineColor = Color3.new(1, 1, 1),
 						FillTransparency = 0.6,
 						DepthMode = depth,
-						Adornee = it.inst,
+						Adornee = ad,
 					}, gui)
 				end
 				e.hl.FillColor = col
@@ -2986,11 +3654,12 @@ end
 
 end -- BLOCK
 
--- VFX OF THE GAME, separately for particles / trails / beams / fire+smoke+sparkles+explosions / lights.
--- Every effect that exists in the world (also new ones that appear later, also effects of other
--- players) is remembered with its original values, so it can be switched off, forced on, scaled,
--- recolored, made more visible and put back exactly. Everything is client side: it changes what
--- YOU see. Roblox never sends client changes to other players.
+-- VFX OF THE GAME (particles / trails / beams / fire+smoke+sparkles / lights).
+-- Every effect that exists in the world (also new ones that appear later) is remembered with its
+-- original values, so it can be switched off, scaled, recolored and put back exactly.
+-- Only safe options remain: Game (untouched) / Off, amount, size and a color. Effects that the
+-- game keeps invisible or disabled are never forced on (that was what flooded the screen before).
+-- Everything is client side: it changes what YOU see.
 do -- BLOCK
 local tracked = setmetatable({}, { __mode = "k" })
 local TYPE_OF = {
@@ -3012,23 +3681,13 @@ local function scaleNS(ns, k)
 	return NumberSequence.new(out)
 end
 
--- boost moves the transparency of a sequence towards 0 (fully visible)
-local function fadeNS(ns, boost)
-	local kp = ns.Keypoints
-	local out = table.create(#kp)
-	for i, p in ipairs(kp) do
-		out[i] = NumberSequenceKeypoint.new(p.Time, p.Value * (1 - boost), p.Envelope * (1 - boost))
-	end
-	return NumberSequence.new(out)
-end
-
 local function snapshot(d)
 	local c = d.ClassName
 	local o = {}
 	pcall(function()
 		if c == "ParticleEmitter" then
-			o.Enabled, o.Rate, o.Size, o.Color, o.Transparency, o.Emit =
-				d.Enabled, d.Rate, d.Size, d.Color, d.Transparency, d.LightEmission
+			o.Enabled, o.Rate, o.Size, o.Color, o.Transparency =
+				d.Enabled, d.Rate, d.Size, d.Color, d.Transparency
 		elseif c == "Trail" then
 			o.Enabled, o.Color, o.Transparency, o.Life = d.Enabled, d.Color, d.Transparency, d.Lifetime
 		elseif c == "Beam" then
@@ -3051,7 +3710,6 @@ end
 local function typeActive(k)
 	return State["Vfx" .. k .. "Mode"] ~= "Game" or State["Vfx" .. k .. "Amt"] ~= 100
 		or State["Vfx" .. k .. "Size"] ~= 100 or State["Vfx" .. k .. "Rec"] ~= "Off"
-		or State["Vfx" .. k .. "Boost"] ~= 0
 end
 
 local function vfxActive()
@@ -3066,35 +3724,31 @@ local function applyOne(d, o, neutral)
 	if not d.Parent then return end
 	local c = d.ClassName
 	local k = TYPE_OF[c]
-	local mode = neutral and "Game" or State["Vfx" .. k .. "Mode"]
-	local off = mode == "Off"
-	local force = mode == "Force on"
+	local off = (not neutral) and State["Vfx" .. k .. "Mode"] == "Off"
 	local rate = neutral and 1 or State["Vfx" .. k .. "Amt"] / 100
 	local size = neutral and 1 or State["Vfx" .. k .. "Size"] / 100
-	local boost = neutral and 0 or State["Vfx" .. k .. "Boost"] / 100
 	local rec = neutral and "Off" or State["Vfx" .. k .. "Rec"]
 	local recolor = rec ~= "Off"
 	local col = rec == "Rainbow" and Color3.fromHSV(vfxHue, 0.9, 1) or Ext.vfxColors[k]
-	local on = (o.Enabled or force) and not off
+	local on = o.Enabled and not off
 	pcall(function()
 		if c == "ParticleEmitter" then
 			d.Enabled = on
 			d.Rate = off and 0 or o.Rate * rate
 			d.Size = size == 1 and o.Size or scaleNS(o.Size, size)
 			d.Color = recolor and ColorSequence.new(col) or o.Color
-			d.Transparency = off and HIDDEN or (boost > 0 and fadeNS(o.Transparency, boost) or o.Transparency)
-			d.LightEmission = math.clamp(o.Emit + boost * 0.5, 0, 1)
+			d.Transparency = off and HIDDEN or o.Transparency
 		elseif c == "Trail" then
 			d.Enabled = on
 			d.Color = recolor and ColorSequence.new(col) or o.Color
-			d.Transparency = off and HIDDEN or (boost > 0 and fadeNS(o.Transparency, boost) or o.Transparency)
+			d.Transparency = off and HIDDEN or o.Transparency
 			d.Lifetime = math.max(o.Life * rate, 0.01)
 		elseif c == "Beam" then
 			d.Enabled = on
 			d.Color = recolor and ColorSequence.new(col) or o.Color
 			d.Width0 = o.W0 * size
 			d.Width1 = o.W1 * size
-			d.Transparency = off and HIDDEN or (boost > 0 and fadeNS(o.Transparency, boost) or o.Transparency)
+			d.Transparency = off and HIDDEN or o.Transparency
 		elseif c == "Fire" then
 			d.Enabled = on
 			d.Size = math.clamp(o.Size * size, 2, 30)
@@ -3104,12 +3758,12 @@ local function applyOne(d, o, neutral)
 			d.Enabled = on
 			d.Size = math.clamp(o.Size * size, 0.1, 100)
 			d.Color = recolor and col or o.Color
-			d.Opacity = off and 0 or (o.Opacity + (1 - o.Opacity) * boost)
+			d.Opacity = off and 0 or o.Opacity
 		elseif c == "Sparkles" then
 			d.Enabled = on
 			d.SparkleColor = recolor and col or o.Color
 		elseif c == "Explosion" then
-			d.Visible = (o.Visible or force) and not off
+			d.Visible = o.Visible and not off
 		else
 			d.Enabled = on
 			d.Brightness = o.Brightness * rate
@@ -3161,14 +3815,14 @@ function Ext.applyVfx()
 	end)
 end
 
--- rainbow colors, and keeping Off / Force on while the game tries to change the effects back
+-- rainbow colors, and keeping "Off" while the game tries to switch the effects back on
 task.spawn(function()
 	while running do
 		task.wait(0.15)
 		local rainbow, forced = false, false
 		for _, k in ipairs(KEYS) do
 			if State["Vfx" .. k .. "Rec"] == "Rainbow" then rainbow = true end
-			if State["Vfx" .. k .. "Mode"] ~= "Game" then forced = true end
+			if State["Vfx" .. k .. "Mode"] == "Off" then forced = true end
 		end
 		if rainbow then
 			vfxHue = (vfxHue + 0.015) % 1
@@ -3412,6 +4066,8 @@ local pagePlayer = createTab("Misc")
 local pageCombat = createTab("Combat")
 local pageVisuals = createTab("Visuals")
 local pageWorld = createTab("World")
+local pageFruit = createTab("Fruit")
+local pageFarm = createTab("Farm")
 local pageServer = createTab("Server")
 local pageAuto = createTab("Auto")
 local pageRec = createTab("Record")
@@ -3462,7 +4118,6 @@ end, "Walk through walls")
 toggles.Spin = addToggle(pagePlayer, "Spin", false, function(v) State.Spin = v end)
 addSlider(pagePlayer, "Spin speed", 5, 60, State.SpinSpeed, function(v) State.SpinSpeed = v end)
 toggles.AntiVoid = addToggle(pagePlayer, "Anti-void", false, function(v) State.AntiVoid = v end, "Return to last safe spot if you fall")
-toggles.ClickTP = addToggle(pagePlayer, "Click teleport", false, function(v) State.ClickTP = v end, "Hold the teleport key + Click")
 toggles.AntiAFK = addToggle(pagePlayer, "Anti-AFK", true, function(v) State.AntiAFK = v end)
 toggles.AutoJump = addToggle(pagePlayer, "Auto jump out", false, function(v) State.AutoJump = v end,
 	"Jumps off a seat or out of an NPC dialogue (cafe) by itself")
@@ -3537,70 +4192,50 @@ toggles.NoStun = addToggle(pageCombat, "No stun", false, function(v)
 	if not v then noStunStates(false) end
 end, "Cancels ragdoll, stun, freeze, anchoring and slow effects on you")
 
--- Visuals
-addSection(pageVisuals, "ESP")
-toggles.ESP = addToggle(pageVisuals, "ESP", false, function(v)
+-- Visuals (everything is grouped: open only the block you need)
+do -- BLOCK
+local espGrp = addGroup(pageVisuals, "Players and NPC ESP", true)
+toggles.ESP = addToggle(espGrp.Body, "ESP", false, function(v)
 	State.ESP = v
 	syncESP()
 end, "Master switch for all markers")
-toggles.ESPWall = addToggle(pageVisuals, "ESP through walls", true, function(v) State.ESPWall = v end,
+toggles.ESPWall = addToggle(espGrp.Body, "ESP through walls", true, function(v) State.ESPWall = v end,
 	"Off = markers are hidden behind walls")
-toggles.ESPNPC = addToggle(pageVisuals, "Show NPCs", true, function(v) State.ESPNPC = v end)
-toggles.ESPChams = addToggle(pageVisuals, "Highlight", true, function(v) State.ESPChams = v end, "Colored body outline")
-toggles.ESPBox = addToggle(pageVisuals, "Boxes + health bar", true, function(v) State.ESPBox = v end)
-toggles.ESPName = addToggle(pageVisuals, "Name, health, distance", true, function(v) State.ESPName = v end)
-toggles.ESPTracer = addToggle(pageVisuals, "Tracers", false, function(v) State.ESPTracer = v end, "Lines from the screen bottom to targets")
-addSlider(pageVisuals, "Max distance", 50, 100000, State.ESPDist, function(v) State.ESPDist = v end, " m")
-addSection(pageVisuals, "Chest ESP")
-toggles.ChestESP = addToggle(pageVisuals, "Chest ESP", false, function(v) State.ChestESP = v end,
+toggles.ESPNPC = addToggle(espGrp.Body, "Show NPCs", true, function(v) State.ESPNPC = v end)
+toggles.ESPChams = addToggle(espGrp.Body, "Highlight", true, function(v) State.ESPChams = v end, "Colored body outline")
+toggles.ESPBox = addToggle(espGrp.Body, "Boxes + health bar", true, function(v) State.ESPBox = v end)
+toggles.ESPName = addToggle(espGrp.Body, "Name, health, distance", true, function(v) State.ESPName = v end)
+toggles.ESPTracer = addToggle(espGrp.Body, "Tracers", false, function(v) State.ESPTracer = v end, "Lines from the screen bottom to targets")
+addSlider(espGrp.Body, "Max distance", 50, 100000, State.ESPDist, function(v) State.ESPDist = v end, " m")
+
+local chestGrp = addGroup(pageVisuals, "Chest ESP", false)
+toggles.ChestESP = addToggle(chestGrp.Body, "Chest ESP", false, function(v) State.ChestESP = v end,
 	"Marks every chest in the world (name contains \"chest\")")
-toggles.ChestWall = addToggle(pageVisuals, "Chest through walls", true, function(v) State.ChestWall = v end,
+toggles.ChestWall = addToggle(chestGrp.Body, "Chest through walls", true, function(v) State.ChestWall = v end,
 	"Off = chest markers are hidden behind walls")
-toggles.ChestHideOpened = addToggle(pageVisuals, "Hide opened chests", true, function(v) State.ChestHideOpened = v end,
+toggles.ChestHideOpened = addToggle(chestGrp.Body, "Hide opened chests", true, function(v) State.ChestHideOpened = v end,
 	"Opened chest leaves the ESP, shows again when it respawns")
-addSlider(pageVisuals, "Chest distance", 20, 100000, State.ChestDist, function(v) State.ChestDist = v end, " m")
-addColor(pageVisuals, "Chest color", espColors.Chest, function(c) espColors.Chest = c end)
-addSection(pageVisuals, "Radar")
-toggles.Radar = addToggle(pageVisuals, "Radar", false, function(v)
+addSlider(chestGrp.Body, "Chest distance", 20, 100000, State.ChestDist, function(v) State.ChestDist = v end, " m")
+addColor(chestGrp.Body, "Chest color", espColors.Chest, function(c) espColors.Chest = c end)
+
+local radarGrp = addGroup(pageVisuals, "Radar", false)
+toggles.Radar = addToggle(radarGrp.Body, "Radar", false, function(v)
 	State.Radar = v
 	radar.Visible = v
 	if not v then clearRadar() end
 end, "Mini-map of nearby targets (drag it where you want)")
-addSlider(pageVisuals, "Radar range", 50, 500, State.RadarRange, function(v) State.RadarRange = v end, " m")
-addSection(pageVisuals, "Colors (ESP and radar)")
-addColor(pageVisuals, "Player color", espColors.Player, function(c) espColors.Player = c end)
-addColor(pageVisuals, "NPC color", espColors.NPC, function(c) espColors.NPC = c end)
-addColor(pageVisuals, "Friend color", espColors.Friend, function(c) espColors.Friend = c end)
+addSlider(radarGrp.Body, "Radar range", 50, 500, State.RadarRange, function(v) State.RadarRange = v end, " m")
 
-addSection(pageVisuals, "Menu text colors")
-do -- BLOCK
-local defText, defSub = Theme.Text, Theme.SubText
+local colGrp = addGroup(pageVisuals, "ESP and radar colors", false)
+addColor(colGrp.Body, "Player color", espColors.Player, function(c) espColors.Player = c end)
+addColor(colGrp.Body, "NPC color", espColors.NPC, function(c) espColors.NPC = c end)
+addColor(colGrp.Body, "Friend color", espColors.Friend, function(c) espColors.Friend = c end)
 
-local function applyTextTheme(key, c)
-	local old = Theme[key]
-	if sameColor(old, c) then return end
-	Theme[key] = c
-	for _, o in ipairs(gui:GetDescendants()) do
-		if o:IsA("TextLabel") or o:IsA("TextButton") or o:IsA("TextBox") then
-			if sameColor(o.TextColor3, old) then o.TextColor3 = c end
-			if o:IsA("TextBox") and sameColor(o.PlaceholderColor3, old) then o.PlaceholderColor3 = c end
-		end
-	end
-end
-
-local textPick = addColor(pageVisuals, "Text color", Theme.Text, function(c) applyTextTheme("Text", c) end)
-local subPick = addColor(pageVisuals, "Secondary text color", Theme.SubText, function(c) applyTextTheme("SubText", c) end)
-addButton(pageVisuals, "Reset text colors", function()
-	textPick.Set(defText)
-	subPick.Set(defSub)
-end)
-end -- BLOCK
-
-addSection(pageVisuals, "Game effects")
-do -- BLOCK
+-- screen filters
 local fxc = Ext.fxColors
+local screenGrp = addGroup(pageVisuals, "Screen filters", false)
 
-local ccGrp = addGroup(pageVisuals, "Color filter", false)
+local ccGrp = addGroup(screenGrp.Body, "Color filter", false)
 toggles.FxCC = addToggle(ccGrp.Body, "Color filter on", false, function(v)
 	State.FxCC = v
 	Ext.applyFx()
@@ -3622,7 +4257,7 @@ addSlider(ccGrp.Body, "Filter brightness", -50, 50, State.FxBri, function(v)
 	Ext.applyFx()
 end, " %")
 
-local bloomGrp = addGroup(pageVisuals, "Bloom (glow)", false)
+local bloomGrp = addGroup(screenGrp.Body, "Bloom (glow)", false)
 toggles.FxBloom = addToggle(bloomGrp.Body, "Bloom on", false, function(v)
 	State.FxBloom = v
 	Ext.applyFx()
@@ -3636,7 +4271,7 @@ addSlider(bloomGrp.Body, "Bloom size", 1, 56, State.FxBloomS, function(v)
 	Ext.applyFx()
 end)
 
-local lightGrp = addGroup(pageVisuals, "Light and fog colors", false)
+local lightGrp = addGroup(screenGrp.Body, "Light and fog colors", false)
 toggles.FxAmb = addToggle(lightGrp.Body, "Custom ambient light", false, function(v)
 	State.FxAmb = v
 	applyWorld()
@@ -3654,50 +4289,72 @@ addColor(lightGrp.Body, "Fog color", fxc.Fog, function(c)
 	Ext.applyFx()
 end)
 
--- VFX of the game, one block per effect type
-local vfxGrp = addGroup(pageVisuals, "VFX (particles, trails, beams, lights)", false)
+-- VFX of the game: for each effect type the same four simple controls
+local vfxGrp = addGroup(pageVisuals, "Game effects (VFX)", false)
+local note = baseRow(vfxGrp.Body, 44)
+new("TextLabel", {
+	BackgroundTransparency = 1,
+	Position = UDim2.fromOffset(12, 4),
+	Size = UDim2.new(1, -24, 1, -8),
+	Text = "Changes only what you see. \"Game\" = untouched. If something looks wrong press Reset all effects.",
+	TextWrapped = true,
+	TextXAlignment = Enum.TextXAlignment.Left,
+	Font = Enum.Font.Gotham,
+	TextSize = 11,
+	TextColor3 = Theme.SubText,
+}, note)
 local VFX_DEF = {
-	-- key, title, amount slider label, size slider label, visibility boost
-	{ "Par", "Particles", "amount", "size", true },
-	{ "Tr", "Trails", "length", nil, true },
-	{ "Be", "Beams", nil, "width", true },
-	{ "Mi", "Fire, smoke, sparkles", nil, "size", true },
-	{ "Li", "Lights", "brightness", "range", false },
+	-- key, title, amount label, size label
+	{ "Par", "Particles", "amount", "size" },
+	{ "Tr", "Trails", "length", nil },
+	{ "Be", "Beams", nil, "width" },
+	{ "Mi", "Fire / smoke / sparkles", nil, "size" },
+	{ "Li", "Lights", "brightness", "range" },
 }
+local vfxSetters = {}
 for _, def in ipairs(VFX_DEF) do
 	local k, title = def[1], def[2]
 	local g = addGroup(vfxGrp.Body, title, false)
-	addSegmented(g.Body, title .. " mode", { "Game", "Off", "Force on" }, "Game", function(v)
+	addSegmented(g.Body, title .. ": mode", { "Game", "Off" }, "Game", function(v)
 		State["Vfx" .. k .. "Mode"] = v
 		Ext.applyVfx()
 	end)
+	table.insert(vfxSetters, title .. ": mode")
 	if def[3] then
-		addSlider(g.Body, title .. " " .. def[3], 0, 300, 100, function(v)
+		addSlider(g.Body, title .. ": " .. def[3], 0, 200, 100, function(v)
 			State["Vfx" .. k .. "Amt"] = v
 			Ext.applyVfx()
 		end, " %")
+		table.insert(vfxSetters, title .. ": " .. def[3])
 	end
 	if def[4] then
-		addSlider(g.Body, title .. " " .. def[4], 10, 300, 100, function(v)
+		addSlider(g.Body, title .. ": " .. def[4], 25, 200, 100, function(v)
 			State["Vfx" .. k .. "Size"] = v
 			Ext.applyVfx()
 		end, " %")
+		table.insert(vfxSetters, title .. ": " .. def[4])
 	end
-	if def[5] then
-		addSlider(g.Body, title .. " visibility boost", 0, 100, 0, function(v)
-			State["Vfx" .. k .. "Boost"] = v
-			Ext.applyVfx()
-		end, " %")
-	end
-	addSegmented(g.Body, title .. " recolor", { "Off", "Color", "Rainbow" }, "Off", function(v)
+	addSegmented(g.Body, title .. ": recolor", { "Off", "Color", "Rainbow" }, "Off", function(v)
 		State["Vfx" .. k .. "Rec"] = v
 		Ext.applyVfx()
 	end)
-	addColor(g.Body, title .. " color", Ext.vfxColors[k], function(c)
+	table.insert(vfxSetters, title .. ": recolor")
+	addColor(g.Body, title .. ": color", Ext.vfxColors[k], function(c)
 		Ext.vfxColors[k] = c
 		if State["Vfx" .. k .. "Rec"] == "Color" then Ext.applyVfx() end
 	end)
 end
+addButton(vfxGrp.Body, "Reset all effects", function()
+	for _, name in ipairs(vfxSetters) do
+		local r = registry[name]
+		if r then
+			local isMode = string.find(name, ": mode", 1, true) or string.find(name, ": recolor", 1, true)
+			r.set(isMode and (string.find(name, ": mode", 1, true) and "Game" or "Off") or 100)
+		end
+	end
+	Ext.applyVfx()
+	notify("All effects were reset")
+end)
 end -- BLOCK
 
 -- World: items lying on the server right now
@@ -3778,7 +4435,7 @@ local function renderItems()
 	if sig == itemSig then
 		for _, g in ipairs(list) do
 			local lbl = itemRows[g.name]
-			if lbl then lbl.Text = "nearest " .. math.floor(g.nearest) .. " m" end
+			if lbl then lbl.Text = L("nearest ") .. math.floor(g.nearest) .. " m" end
 		end
 		return
 	end
@@ -3835,7 +4492,7 @@ local function renderItems()
 			AnchorPoint = Vector2.new(1, 0),
 			Position = UDim2.new(1, -62, 0, 0),
 			Size = UDim2.fromOffset(110, 30),
-			Text = "nearest " .. math.floor(g.nearest) .. " m",
+			Text = L("nearest ") .. math.floor(g.nearest) .. " m",
 			TextXAlignment = Enum.TextXAlignment.Right,
 			Font = Enum.Font.GothamBold,
 			TextSize = 12,
@@ -3878,6 +4535,353 @@ end)
 
 end -- BLOCK
 
+-- FRUIT: search of everything in workspace with the word in its name, auto drop / auto store
+do -- BLOCK
+local function trim(s) return (tostring(s):gsub("^%s+", ""):gsub("%s+$", "")) end
+
+addSection(pageFruit, "Search in workspace")
+addInput(pageFruit, "Fruit search word", "Fruit", function(v)
+	local w = string.lower(trim(v))
+	if w == "" then w = "fruit" end
+	if w ~= Ext.fruitWord then
+		Ext.fruitWord = w
+		Ext.rescanFruit()
+	end
+end, "word in the name")
+local setFruitCount = addInfo(pageFruit, "Fruits found")
+toggles.FruitESP = addToggle(pageFruit, "Fruit ESP", false, function(v) State.FruitESP = v end,
+	"Marks everything with the search word in its name")
+toggles.FruitWall = addToggle(pageFruit, "Fruit through walls", true, function(v) State.FruitWall = v end)
+addSlider(pageFruit, "Fruit distance", 20, 100000, State.FruitDist, function(v) State.FruitDist = v end, " m")
+addColor(pageFruit, "Fruit color", espColors.Fruit, function(c) espColors.Fruit = c end)
+addButton(pageFruit, "Scan workspace again", function()
+	Ext.rescanFruit()
+	notify("Scanning workspace...", 2)
+end)
+
+addSection(pageFruit, "Fruits in the world")
+local fruitHolder = new("Frame", {
+	Size = UDim2.new(1, 0, 0, 0),
+	AutomaticSize = Enum.AutomaticSize.Y,
+	BackgroundTransparency = 1,
+	LayoutOrder = nextOrder(pageFruit),
+}, pageFruit)
+new("UIListLayout", { Padding = UDim.new(0, 4), SortOrder = Enum.SortOrder.LayoutOrder }, fruitHolder)
+
+local function nearestFruit(name)
+	local myRoot = getRoot()
+	local origin = myRoot and myRoot.Position or camera.CFrame.Position
+	local best, bd
+	for inst in pairs(Ext.found.Fruit) do
+		if inst.Name == name and inst:IsDescendantOf(workspace) then
+			local p = Ext.posOf(inst)
+			if p then
+				local d = (p - origin).Magnitude
+				if not bd or d < bd then best, bd = p, d end
+			end
+		end
+	end
+	return best
+end
+
+local fruitRows, fruitSig = {}, nil
+local function renderFruits()
+	local myRoot = getRoot()
+	local origin = myRoot and myRoot.Position or camera.CFrame.Position
+	local groups, total = {}, 0
+	for inst in pairs(Ext.found.Fruit) do
+		if not inst:IsDescendantOf(workspace) then
+			Ext.found.Fruit[inst] = nil
+		else
+			local p = Ext.posOf(inst)
+			if p then
+				local d = (p - origin).Magnitude
+				local g = groups[inst.Name]
+				if not g then
+					g = { name = inst.Name, count = 0, nearest = math.huge }
+					groups[inst.Name] = g
+				end
+				g.count += 1
+				total += 1
+				if d < g.nearest then g.nearest = d end
+			end
+		end
+	end
+	setFruitCount(tostring(total))
+	local list = {}
+	for _, g in pairs(groups) do table.insert(list, g) end
+	table.sort(list, function(a, b) return a.nearest < b.nearest end)
+
+	local parts = {}
+	for i, g in ipairs(list) do
+		if i > 40 then break end
+		parts[#parts + 1] = g.name .. ":" .. g.count
+	end
+	local sig = table.concat(parts, "|")
+	if sig == fruitSig then
+		for _, g in ipairs(list) do
+			local lbl = fruitRows[g.name]
+			if lbl then lbl.Text = L("nearest ") .. math.floor(g.nearest) .. " m" end
+		end
+		return
+	end
+	fruitSig = sig
+	table.clear(fruitRows)
+	for _, c in ipairs(fruitHolder:GetChildren()) do
+		if c:IsA("GuiObject") then c:Destroy() end
+	end
+	if #list == 0 then
+		local row = new("Frame", {
+			Size = UDim2.new(1, 0, 0, 30), BackgroundColor3 = Theme.Item, BorderSizePixel = 0, LayoutOrder = 1,
+		}, fruitHolder)
+		corner(row, 8)
+		outline(row)
+		new("TextLabel", {
+			BackgroundTransparency = 1, Position = UDim2.fromOffset(12, 0), Size = UDim2.new(1, -24, 1, 0),
+			Text = "No fruits found", TextXAlignment = Enum.TextXAlignment.Left,
+			Font = Enum.Font.Gotham, TextSize = 12, TextColor3 = Theme.SubText,
+		}, row)
+		return
+	end
+	for i, g in ipairs(list) do
+		if i > 40 then break end
+		local row = new("Frame", {
+			Size = UDim2.new(1, 0, 0, 30), BackgroundColor3 = Theme.Item, BorderSizePixel = 0, LayoutOrder = i,
+		}, fruitHolder)
+		corner(row, 8)
+		outline(row)
+		new("TextLabel", {
+			BackgroundTransparency = 1, Position = UDim2.fromOffset(10, 0), Size = UDim2.new(1, -220, 1, 0),
+			Text = g.name .. (g.count > 1 and ("  x" .. g.count) or ""),
+			TextXAlignment = Enum.TextXAlignment.Left, TextTruncate = Enum.TextTruncate.AtEnd,
+			Font = Enum.Font.GothamMedium, TextSize = 12, TextColor3 = Theme.Text,
+		}, row)
+		fruitRows[g.name] = new("TextLabel", {
+			BackgroundTransparency = 1, AnchorPoint = Vector2.new(1, 0),
+			Position = UDim2.new(1, -96, 0, 0), Size = UDim2.fromOffset(110, 30),
+			Text = L("nearest ") .. math.floor(g.nearest) .. " m",
+			TextXAlignment = Enum.TextXAlignment.Right,
+			Font = Enum.Font.GothamBold, TextSize = 11, TextColor3 = Theme.Accent,
+		}, row)
+		local itemName = g.name
+		local function small(text, x, fn)
+			local b = new("TextButton", {
+				Size = UDim2.fromOffset(40, 22), Position = UDim2.new(1, x, 0.5, -11),
+				BackgroundColor3 = Theme.Panel, Text = text, Font = Enum.Font.GothamMedium,
+				TextSize = 12, TextColor3 = Theme.Text, AutoButtonColor = false, BorderSizePixel = 0,
+			}, row)
+			corner(b, 6)
+			outline(b)
+			b.MouseEnter:Connect(function() tween(b, 0.12, { BackgroundColor3 = Theme.ItemHover }) end)
+			b.MouseLeave:Connect(function() tween(b, 0.12, { BackgroundColor3 = Theme.Panel }) end)
+			b.MouseButton1Click:Connect(fn)
+		end
+		small("Fly", -88, function()
+			flyTo(function()
+				local p = nearestFruit(itemName)
+				return p and (p + Vector3.new(0, 2, 0))
+			end, itemName)
+		end)
+		small("TP", -46, function()
+			local root, p = getRoot(), nearestFruit(itemName)
+			if root and p then root.CFrame = CFrame.new(p + Vector3.new(0, 3, 0)) end
+		end)
+	end
+end
+renderFruits()
+task.spawn(function()
+	while running do
+		task.wait(1)
+		if pageFruit.Visible and main.Visible and not minimized then pcall(renderFruits) end
+	end
+end)
+
+-- AUTO DROP / AUTO STORE of the fruits you carry (tools whose name has the search word).
+-- Store / drop use the remotes of the game: a RemoteEvent / RemoteFunction in ReplicatedStorage whose
+-- name contains "store" / "drop" (or exactly the name typed below). Drop also tries the Backspace key
+-- (the standard Roblox way to drop the equipped tool).
+addSection(pageFruit, "Auto Drop / Store")
+local setBag = addInfo(pageFruit, "Fruits in backpack")
+toggles.FruitDrop = addToggle(pageFruit, "Auto Drop fruits", false, function(v)
+	State.FruitDrop = v
+	if v and State.FruitStore and toggles.FruitStore then toggles.FruitStore.Set(false) end
+end, "Drops the fruits you carry, one after another")
+toggles.FruitStore = addToggle(pageFruit, "Auto Store fruits", false, function(v)
+	State.FruitStore = v
+	if v and State.FruitDrop and toggles.FruitDrop then toggles.FruitDrop.Set(false) end
+end, "Stores the fruits you carry, one after another")
+addSlider(pageFruit, "Drop / Store delay", 100, 5000, State.FruitInterval, function(v) State.FruitInterval = v end, " ms")
+local storeName, dropName = "", ""
+addInput(pageFruit, "Store remote name", "", function(v) storeName = v end, "empty = auto find")
+addInput(pageFruit, "Drop remote name", "", function(v) dropName = v end, "empty = auto find")
+
+local remoteCache, remoteT = {}, -100
+local function allRemotes()
+	if os.clock() - remoteT > 10 then
+		remoteT = os.clock()
+		table.clear(remoteCache)
+		for _, d in ipairs(ReplicatedStorage:GetDescendants()) do
+			if d:IsA("RemoteEvent") or d:IsA("RemoteFunction") then remoteCache[#remoteCache + 1] = d end
+		end
+	end
+	return remoteCache
+end
+
+local function findRemotes(kind, exact)
+	local out = {}
+	exact = string.lower(trim(exact))
+	for _, r in ipairs(allRemotes()) do
+		local ln = string.lower(r.Name)
+		if exact ~= "" then
+			if ln == exact then out[#out + 1] = r end
+		elseif string.find(ln, kind, 1, true) then
+			out[#out + 1] = r
+		end
+	end
+	return out
+end
+
+local function callRemote(r, kind, tool)
+	local nm = tool.Name
+	if r:IsA("RemoteEvent") then
+		pcall(r.FireServer, r, tool)
+		pcall(r.FireServer, r, nm)
+	else
+		local word = kind == "store" and "StoreFruit" or "DropFruit"
+		task.spawn(function()
+			pcall(r.InvokeServer, r, word, nm)
+			pcall(r.InvokeServer, r, tool)
+		end)
+	end
+end
+
+local function myFruits()
+	local list, w = {}, Ext.fruitWord
+	local function scan(c)
+		if not c then return end
+		for _, t in ipairs(c:GetChildren()) do
+			if t:IsA("Tool") and string.find(string.lower(t.Name), w, 1, true) then list[#list + 1] = t end
+		end
+	end
+	scan(player:FindFirstChildOfClass("Backpack"))
+	scan(player.Character)
+	return list
+end
+
+local function storeFruit(tool)
+	for _, r in ipairs(findRemotes("store", storeName)) do callRemote(r, "store", tool) end
+end
+
+local function dropFruit(tool)
+	local hum = getHumanoid()
+	if not hum then return end
+	if tool.Parent ~= player.Character then
+		pcall(function() hum:EquipTool(tool) end)
+		task.wait(0.12)
+	end
+	for _, r in ipairs(findRemotes("drop", dropName)) do callRemote(r, "drop", tool) end
+	if okVIM and tool.Parent == player.Character and not UIS:GetFocusedTextBox() then
+		pcall(function()
+			VIM:SendKeyEvent(true, Enum.KeyCode.Backspace, false, game)
+			VIM:SendKeyEvent(false, Enum.KeyCode.Backspace, false, game)
+		end)
+	end
+end
+
+addButton(pageFruit, "Drop all fruits now", function()
+	task.spawn(function()
+		local n = 0
+		for _, t in ipairs(myFruits()) do
+			dropFruit(t)
+			n += 1
+			task.wait(0.3)
+		end
+		notify(n == 0 and "No fruits in backpack" or L("Dropped: ") .. n, 2)
+	end)
+end)
+addButton(pageFruit, "Store all fruits now", function()
+	task.spawn(function()
+		local n = 0
+		for _, t in ipairs(myFruits()) do
+			storeFruit(t)
+			n += 1
+			task.wait(0.3)
+		end
+		notify(n == 0 and "No fruits in backpack" or L("Stored: ") .. n, 2)
+	end)
+end)
+
+task.spawn(function()
+	while running do
+		task.wait(math.max(State.FruitInterval, 100) / 1000)
+		local list = myFruits()
+		setBag(tostring(#list))
+		if (State.FruitDrop or State.FruitStore) and getHumanoid() and list[1] then
+			local tool = list[1]
+			if State.FruitStore then
+				pcall(storeFruit, tool)
+			elseif State.FruitDrop then
+				pcall(dropFruit, tool)
+			end
+		end
+	end
+end)
+end -- BLOCK
+
+-- FARM (settings; the engine is below, after the settings are loaded)
+do -- BLOCK
+addSection(pageFarm, "Status")
+local setFarm = addInfo(pageFarm, "Farm status")
+setFarm("Off")
+Ext.Farm.setStatus = setFarm
+
+local farmModes = { "FarmNear", "FarmFactory", "FarmPirate" }
+-- only one of the three target farms can run at a time
+local function exclusive(me)
+	local map = { FarmNear = toggles.FarmNear, FarmFactory = toggles.FarmFactory, FarmPirate = toggles.FarmPirate }
+	for _, id in ipairs(farmModes) do
+		if id ~= me and map[id] and map[id].Get() then map[id].Set(false) end
+	end
+	for _, id in ipairs({ "FarmPumpkin", "FarmNPC", "FarmPatch" }) do
+		local t = toggles[id]
+		if t and t.Get() then t.Set(false) end
+	end
+end
+
+addSection(pageFarm, "Movement and attack")
+addSegmented(pageFarm, "Movement mode", { "Tween", "Bypass" }, "Tween", function(v) State.FarmBypass = v == "Bypass" end)
+addSlider(pageFarm, "Farm speed", 20, 1000, State.FarmSpeed, function(v) State.FarmSpeed = v end, " st/s")
+addSlider(pageFarm, "Farm clicks per second", 1, 100, State.FarmCPS, function(v) State.FarmCPS = v end)
+addSlider(pageFarm, "NPC hover height", 2, 40, State.FarmNPCHeight, function(v) State.FarmNPCHeight = v end, " st")
+toggles.FarmLook = addToggle(pageFarm, "Look at target", true, function(v) State.FarmLook = v end,
+	"Turns the camera so the cursor points at the target (the cursor never moves)")
+toggles.FarmEquip = addToggle(pageFarm, "Auto equip weapon", true, function(v) State.FarmEquip = v end,
+	"Equips the first tool from your backpack while farming")
+
+addSection(pageFarm, "Nearest NPCs")
+toggles.FarmNear = addToggle(pageFarm, "Farm nearest NPCs", false, function(v)
+	State.NearNPC = v
+	if v then exclusive("FarmNear") end
+end, "Flies to the nearest NPC and hits it")
+addSlider(pageFarm, "NPC distance", 10, 5000, State.NearRange, function(v) State.NearRange = v end, " m")
+addInput(pageFarm, "Nearest NPC name filter", "", function(v) State.NearName = v end, "empty = any NPC")
+
+addSection(pageFarm, "Factory")
+toggles.FarmFactory = addToggle(pageFarm, "Auto Farm Factory", false, function(v)
+	State.FactoryFarm = v
+	if v then exclusive("FarmFactory") end
+end, "SmileFactory > Core > Part: flies to it and hits it")
+addSlider(pageFarm, "Factory hover height", 2, 40, State.FactoryHeight, function(v) State.FactoryHeight = v end, " st")
+
+addSection(pageFarm, "Pirates")
+toggles.FarmPirate = addToggle(pageFarm, "Auto Farm Pirates", false, function(v)
+	State.PirateFarm = v
+	if v then exclusive("FarmPirate") end
+end, "Flies to the pirate base and kills the nearest NPCs around it")
+addSlider(pageFarm, "Pirate radius", 50, 3000, State.PirateRange, function(v) State.PirateRange = v end, " m")
+addInput(pageFarm, "Pirate name filter", "", function(v) State.PirateName = v end, "empty = any NPC")
+end -- BLOCK
+
 -- SERVER
 do -- BLOCK
 local joinClock = os.clock()
@@ -3892,7 +4896,7 @@ local jobShort = game.JobId ~= "" and string.sub(game.JobId, 1, 8) or "Studio"
 local function updateStats()
 	if not State.StatsHud then return end
 	statsFrame.Text = string.format(
-		"Server uptime   %s\nYour time   %s\nPlayers   %d / %d\nPing   %d ms\nFPS   %d\nServer ID   %s",
+		L("Server uptime") .. "   %s\n" .. L("Your time") .. "   %s\n" .. L("Players") .. "   %d / %d\nPing   %d ms\nFPS   %d\n" .. L("Server ID") .. "   %s",
 		fmtTime(workspace.DistributedGameTime),
 		fmtTime(os.clock() - joinClock),
 		#Players:GetPlayers(), Players.MaxPlayers,
@@ -3963,7 +4967,6 @@ local useLbl = profLabel(53, 14, 11, Enum.Font.Gotham, Theme.SubText)
 
 local countryText = "..."
 nameLbl.Text = player.DisplayName
-idLbl.Text = "Account ID  " .. tostring(player.UserId)
 local function refreshSub()
 	subLbl.Text = "@" .. player.Name .. "  •  " .. countryText
 end
@@ -3983,7 +4986,8 @@ end)
 
 local function updateProfile()
 	local session = os.clock() - joinClock
-	useLbl.Text = "Using this script: session " .. fmtTime(session) .. "  •  total " .. fmtLong(usageBase + session)
+	idLbl.Text = L("Account ID") .. "  " .. tostring(player.UserId)
+	useLbl.Text = L("Using this script: session ") .. fmtTime(session) .. "  •  " .. L("total ") .. fmtLong(usageBase + session)
 end
 updateProfile()
 
@@ -4051,7 +5055,7 @@ miniBtn(qRow, "TP to nearest", UDim2.new(0.5, -6, 0, 22), nil, function()
 	end
 	if best then
 		root.CFrame = best.root.CFrame * CFrame.new(0, 0, 4)
-		notify("Teleported to " .. best.name)
+		notify(L("Teleported to ") .. best.name)
 	else
 		notify("No targets found")
 	end
@@ -4127,9 +5131,10 @@ local function rebuildPlayers()
 			LayoutOrder = 101,
 		}, pBody)
 	end
-	playersGrp.Label.Text = "Players (" .. (n + 1) .. ")"
+	playersGrp.Label.Text = L("Players") .. " (" .. (n + 1) .. ")"
 end
 rebuildPlayers()
+table.insert(Lang.hooks, rebuildPlayers)
 connect(Players.PlayerAdded, function() task.defer(rebuildPlayers) end)
 connect(Players.PlayerRemoving, function() task.defer(rebuildPlayers) end)
 
@@ -4176,7 +5181,7 @@ local function pressKey(name)
 			return
 		end
 	end
-	if name == Binds.Menu or name == Binds.Zoom or name == Binds.ClickTP or name == Binds.FlyBoost then return end
+	if name == Binds.Menu or name == Binds.Zoom or name == Binds.FlyBoost then return end
 	local ok = okVIM and pcall(function()
 		VIM:SendKeyEvent(true, kc, false, game)
 		task.wait(0.05)
@@ -4216,8 +5221,9 @@ local function makeAuto(i)
 	g.Label.Size = UDim2.new(1, -150, 1, 0)
 
 	local function retitle()
-		g.Label.Text = string.format("Auto %d   ·   %s   ·   %s", i, a.Mode, a.Key == "None" and "no key" or a.Key)
+		g.Label.Text = string.format("Auto %d   ·   %s   ·   %s", i, L(a.Mode), a.Key == "None" and L("no key") or a.Key)
 	end
+	table.insert(Lang.hooks, retitle)
 
 	local track = new("TextButton", {
 		Size = UDim2.fromOffset(36, 18),
@@ -4263,7 +5269,7 @@ local function makeAuto(i)
 		a.Removed = true
 		a.On = false
 		g.Holder:Destroy()
-		if not loading then notify("Auto " .. i .. " removed") end
+		if not loading then notify(L("Auto ") .. i .. L(" removed")) end
 		changed()
 	end
 	del.MouseButton1Click:Connect(removeAuto)
@@ -4372,7 +5378,7 @@ registry.AutoCount = {
 addSection(pageAuto, "Auto click")
 toggles.AutoClick = addToggle(pageAuto, "Auto click", false, function(v) State.AutoClick = v end,
 	"Clicks in the game itself (works without a Tool)")
-addSlider(pageAuto, "Clicks per second", 1, 30, State.ClickCPS, function(v) State.ClickCPS = v end)
+addSlider(pageAuto, "Clicks per second", 1, 100, State.ClickCPS, function(v) State.ClickCPS = v end)
 
 local timingGroup = addGroup(pageAuto, "Timing", false, 10)
 addSlider(timingGroup.Body, "Spawn delay", 0, 10, AutoCfg.Delay, function(v) AutoCfg.Delay = v end, " s")
@@ -4383,7 +5389,7 @@ for i = 1, 3 do makeAuto(i) end
 
 local addAutoBtn = addButton(pageAuto, "+   Add auto button", function()
 	if activeAutoCount() >= AUTO_MAX then
-		notify("Maximum " .. AUTO_MAX .. " auto buttons")
+		notify(L("Maximum ") .. AUTO_MAX .. L(" auto buttons"))
 		return
 	end
 	if #Auto >= 40 then
@@ -4414,8 +5420,8 @@ local stopPlaying
 
 local function slotText(i)
 	local d = Rec.slots[i]
-	if not d then return "empty" end
-	return string.format("%.1f s, %d actions", d.dur, #d.events)
+	if not d then return L("empty") end
+	return string.format("%.1f s, %d " .. L("actions"), d.dur, #d.events)
 end
 
 local function refreshRec()
@@ -4539,7 +5545,7 @@ local function stopRecording()
 	end
 	d.dur = d.samples[#d.samples].t
 	Rec.slots[Rec.recSlot] = d
-	notify(string.format("Saved to slot %d (%.1f s)", Rec.recSlot, d.dur), 2.5)
+	notify(string.format(L("Saved to slot ") .. "%d (%.1f s)", Rec.recSlot, d.dur), 2.5)
 	cloudSave(Rec.recSlot)
 	refreshRec()
 end
@@ -4746,11 +5752,11 @@ task.spawn(function()
 	while running do
 		if setRecStatus then
 			if Rec.recording then
-				setRecStatus(string.format("Recording  %.1f s", os.clock() - Rec.t0))
+				setRecStatus(string.format(L("Recording") .. "  %.1f s", os.clock() - Rec.t0))
 			elseif Rec.playing then
-				setRecStatus(string.format("Playing  %.1f / %.1f s", Rec.playT, Rec.playDur))
+				setRecStatus(string.format(L("Playing") .. "  %.1f / %.1f s", Rec.playT, Rec.playDur))
 			else
-				setRecStatus("Idle")
+				setRecStatus(L("Idle"))
 			end
 		end
 		task.wait(0.2)
@@ -4775,7 +5781,7 @@ addButton(pageRec, "Clear slot", function()
 	if Rec.slots[s] then
 		Rec.slots[s] = nil
 		cloudClear(s)
-		notify("Slot " .. s .. " cleared")
+		notify(L("Slot ") .. s .. L(" cleared"))
 	end
 	refreshRec()
 end)
@@ -4798,9 +5804,12 @@ Rec.decode = decodeRec
 Rec.disconnect = recDisconnect
 end -- BLOCK
 
+-- HTTP (shared by chat and the font download)
+local httpReq = (syn and syn.request) or http_request or request or (http and http.request) or (fluxus and fluxus.request)
+Ext.httpReq = httpReq
+
 -- GLOBAL CHAT (public relay ntfy.sh, anonymous by default)
 do -- BLOCK
-local httpReq = (syn and syn.request) or http_request or request or (http and http.request) or (fluxus and fluxus.request)
 local WSConnect = WebSocket and WebSocket.connect
 local BASE = "https://ntfy.sh/"
 local mySid = string.sub(HttpService:GenerateGUID(false), 1, 8)
@@ -4848,20 +5857,20 @@ local function addMessage(who, text, mine)
 	if not list then return end
 	msgCount += 1
 	local col = mine and Theme.Accent or nameColor(who)
-	new("TextLabel", {
-		Size = UDim2.new(1, -6, 0, 0),
-		AutomaticSize = Enum.AutomaticSize.Y,
-		BackgroundTransparency = 1,
-		RichText = true,
-		TextWrapped = true,
-		TextXAlignment = Enum.TextXAlignment.Left,
-		TextYAlignment = Enum.TextYAlignment.Top,
-		Font = Enum.Font.GothamMedium,
-		TextSize = 12,
-		TextColor3 = Theme.Text,
-		Text = string.format("<font color=\"%s\"><b>%s</b></font>  %s", hexOf(col), esc(who), esc(text)),
-		LayoutOrder = msgCount,
-	}, list)
+	local lbl = Instance.new("TextLabel")
+	lbl.Size = UDim2.new(1, -6, 0, 0)
+	lbl.AutomaticSize = Enum.AutomaticSize.Y
+	lbl.BackgroundTransparency = 1
+	lbl.RichText = true
+	lbl.TextWrapped = true
+	lbl.TextXAlignment = Enum.TextXAlignment.Left
+	lbl.TextYAlignment = Enum.TextYAlignment.Top
+	lbl.Font = Enum.Font.GothamMedium
+	lbl.TextSize = 12
+	lbl.TextColor3 = Theme.Text
+	lbl.Text = string.format("<font color=\"%s\"><b>%s</b></font>  %s", hexOf(col), esc(who), esc(text))
+	lbl.LayoutOrder = msgCount
+	lbl.Parent = list
 
 	local labels = {}
 	for _, c in ipairs(list:GetChildren()) do
@@ -5102,7 +6111,7 @@ end)
 table.insert(Ext.cleanup, stopChat)
 end -- BLOCK
 
--- Settings
+-- SETTINGS SNAPSHOT / UNLOAD
 local function snapshot()
 	local data = {}
 	for name, c in pairs(registry) do
@@ -5144,7 +6153,16 @@ local function unload()
 end
 env.ForgottenUnload = unload
 
+-- SETTINGS PAGE
 do -- BLOCK
+-- language (everything in the menu is translated live)
+addSection(pageSettings, "Language")
+addDropdown(pageSettings, "Language", { { "EN", "English" }, { "RU", "Русский" } }, Lang.code, function(id)
+	Lang.code = id
+	State.Lang = id
+	Ext.applyLang()
+end)
+
 -- menu background: solid color or a two-color gradient
 local bgC1, bgC2 = Theme.Bg, Color3.fromRGB(34, 22, 66)
 local function applyBg()
@@ -5203,11 +6221,130 @@ local pick2 = addColor(appearance.Body, "Background color 2", bgC2, function(c)
 end)
 addColor(appearance.Body, "Accent color", Theme.Accent, applyAccent)
 
+-- menu text colors (moved here from Visuals)
+do -- BLOCK
+local defText, defSub = Theme.Text, Theme.SubText
+
+local function applyTextTheme(key, c)
+	local old = Theme[key]
+	if sameColor(old, c) then return end
+	Theme[key] = c
+	for _, o in ipairs(gui:GetDescendants()) do
+		if o:IsA("TextLabel") or o:IsA("TextButton") or o:IsA("TextBox") then
+			if sameColor(o.TextColor3, old) then o.TextColor3 = c end
+			if o:IsA("TextBox") and sameColor(o.PlaceholderColor3, old) then o.PlaceholderColor3 = c end
+		end
+	end
+end
+
+local textPick = addColor(appearance.Body, "Text color", Theme.Text, function(c) applyTextTheme("Text", c) end)
+local subPick = addColor(appearance.Body, "Secondary text color", Theme.SubText, function(c) applyTextTheme("SubText", c) end)
+addButton(appearance.Body, "Reset text colors", function()
+	textPick.Set(defText)
+	subPick.Set(defSub)
+end)
+end -- BLOCK
+
 -- FONTS
+-- Built-in Roblox fonts work everywhere. "Comfortaa" and "Fingerpaint" are not part of Roblox, so
+-- they are downloaded once (needs an executor with request / writefile / getcustomasset) and
+-- turned into a font family. If that is not possible a similar built-in font is used.
 local fontOrig = setmetatable({}, { __mode = "k" })
 local faceCache = {}
+local customFam = {} -- name -> family path (string) or false
+local FONT_DIR = "CheatMenu/fonts"
+local FONT_CUSTOM = {
+	Comfortaa = {
+		url = "https://raw.githubusercontent.com/google/fonts/main/ofl/comfortaa/Comfortaa%5Bwght%5D.ttf",
+		file = "Comfortaa.ttf", fallback = "Nunito",
+	},
+	Fingerpaint = {
+		url = "https://raw.githubusercontent.com/google/fonts/main/ofl/fingerpaint/FingerPaint-Regular.ttf",
+		file = "Fingerpaint.ttf", fallback = "Kalam",
+	},
+}
+
+local function fsReady()
+	return type(writefile) == "function" and type(readfile) == "function" and type(isfile) == "function"
+		and type(getcustomasset) == "function"
+end
+
+local function buildFamily(name, def)
+	local ttf = FONT_DIR .. "/" .. def.file
+	local asset = getcustomasset(ttf)
+	local json = HttpService:JSONEncode({
+		name = name,
+		faces = {
+			{ name = "Regular", weight = 400, style = "normal", assetId = asset },
+			{ name = "Bold", weight = 700, style = "normal", assetId = asset },
+		},
+	})
+	local jpath = FONT_DIR .. "/" .. name .. ".json"
+	writefile(jpath, json)
+	return getcustomasset(jpath)
+end
+
+local fontLoading = {}
+function Ext.ensureFont(name, done)
+	local def = FONT_CUSTOM[name]
+	if not def or customFam[name] ~= nil then
+		if done then done() end
+		return
+	end
+	if fontLoading[name] then return end
+	if not (fsReady() and httpReq) then
+		customFam[name] = false
+		notify(L("Font ") .. name .. L(" needs executor file functions. Using a similar font"), 4)
+		if done then done() end
+		return
+	end
+	fontLoading[name] = true
+	notify(L("Loading font ") .. name .. "...", 2)
+	task.spawn(function()
+		local ok, fam = pcall(function()
+			pcall(function()
+				if type(isfolder) == "function" and type(makefolder) == "function" then
+					if not isfolder("CheatMenu") then makefolder("CheatMenu") end
+					if not isfolder(FONT_DIR) then makefolder(FONT_DIR) end
+				end
+			end)
+			local ttf = FONT_DIR .. "/" .. def.file
+			if not isfile(ttf) then
+				local res = httpReq({ Url = def.url, Method = "GET" })
+				if not (res and res.StatusCode == 200 and res.Body and #res.Body > 1000) then error("download failed") end
+				writefile(ttf, res.Body)
+			end
+			return buildFamily(name, def)
+		end)
+		fontLoading[name] = nil
+		if ok and type(fam) == "string" then
+			customFam[name] = fam
+		else
+			customFam[name] = false
+			notify(L("Font ") .. name .. L(" could not be loaded. Using a similar font"), 4)
+		end
+		faceCache[name] = nil
+		faceCache[name .. "|B"] = nil
+		if done then done() end
+	end)
+end
 
 local function getFace(name, bold)
+	local def = FONT_CUSTOM[name]
+	if def then
+		local fam = customFam[name]
+		if fam then
+			local key = name .. (bold and "|B" or "")
+			local f = faceCache[key]
+			if f == nil then
+				local ok, ff = pcall(Font.new, fam, bold and Enum.FontWeight.Bold or Enum.FontWeight.Regular)
+				f = ok and ff or false
+				faceCache[key] = f
+			end
+			return f or nil
+		end
+		name = def.fallback
+	end
 	local key = name .. (bold and "|B" or "")
 	local f = faceCache[key]
 	if f == nil then
@@ -5307,25 +6444,46 @@ table.insert(Ext.cleanup, function()
 	end
 end)
 
-local MENU_FONTS = {
-	"Gotham", "Fingerpaint", "Comfortaa",
-	"Creepster", "Bangers", "PermanentMarker",
-	"SciFi", "Code", "IndieFlower",
+-- font lists: only fonts that exist in this Roblox version are shown
+local MENU_FONT_NAMES = {
+	"Gotham", "Comfortaa", "Fingerpaint", "Nunito", "Montserrat", "Quicksand", "JosefinSans", "Ubuntu",
+	"Oswald", "Merriweather", "Kalam", "PatrickHand", "IndieFlower", "AmaticSC", "FredokaOne", "LuckiestGuy",
+	"PermanentMarker", "SpecialElite", "Bangers", "Creepster", "Fondamento", "GrenzeGotisch", "Jura", "Michroma",
+	"Sarpanch", "SciFi", "Code", "Arcade", "Bodoni",
 }
-local GAME_FONTS = {
-	"Default", "Gotham", "Fingerpaint",
-	"Comfortaa", "Creepster", "Bangers",
-	"PermanentMarker", "SciFi", "Code",
-	"IndieFlower", "Fondamento", "Arcade",
-}
-addChoice(appearance.Body, "Menu font", MENU_FONTS, "Gotham", function(v)
+local function buildFontOptions(withDefault)
+	local out = {}
+	if withDefault then out[#out + 1] = { "Default", "Default" } end
+	for _, n in ipairs(MENU_FONT_NAMES) do
+		local ok = FONT_CUSTOM[n] ~= nil
+		if not ok then
+			local e, v = pcall(function() return Enum.Font[n] end)
+			ok = e and v ~= nil
+		end
+		if ok then out[#out + 1] = { n, n } end
+	end
+	return out
+end
+
+addSection(appearance.Body, "Fonts")
+addDropdown(appearance.Body, "Menu font", buildFontOptions(false), "Gotham", function(v)
 	if State.MenuFont == v then return end
 	State.MenuFont = v
+	if FONT_CUSTOM[v] and customFam[v] == nil then
+		Ext.ensureFont(v, function()
+			if State.MenuFont == v then applyMenuFont() end
+		end)
+	end
 	applyMenuFont()
 end)
-addChoice(appearance.Body, "Game font", GAME_FONTS, "Default", function(v)
+addDropdown(appearance.Body, "Game font", buildFontOptions(true), "Default", function(v)
 	if State.GameFont == v then return end
 	State.GameFont = v
+	if FONT_CUSTOM[v] and customFam[v] == nil then
+		Ext.ensureFont(v, function()
+			if State.GameFont == v then Ext.applyGameFont() end
+		end)
+	end
 	Ext.applyGameFont()
 end)
 
@@ -5665,8 +6823,6 @@ addSegmented(cursorGroup.Body, "Cursor anchor", { "Center", "Corner" }, "Center"
 	applyCursor(false)
 end)
 
-end -- BLOCK
-
 addSection(pageSettings, "Session")
 addButton(pageSettings, "Save settings now", function()
 	if not saveRemote then notify("Save: storage is not ready", 3) return end
@@ -5688,38 +6844,39 @@ addButton(pageSettings, "Rejoin server", function()
 	TeleportService:Teleport(game.PlaceId, player)
 end)
 addButton(pageSettings, "Unload menu", unload)
+end -- BLOCK
 
--- HALLOWEEN TAB (orange, last in the list)
+-- HALLOWEEN TAB (orange, last in the list). The movement mode (Tween / Bypass), speed, clicks per
+-- second and the other farm options are shared with the Farm tab.
 do -- BLOCK
+local function offTargetFarms()
+	for _, id in ipairs({ "FarmNear", "FarmFactory", "FarmPirate" }) do
+		local t = toggles[id]
+		if t and t.Get() then t.Set(false) end
+	end
+end
+
 addSection(pageHalloween, "Auto farm")
-local setFarm = addInfo(pageHalloween, "Farm status")
-setFarm("Off")
-Ext.Farm.setStatus = setFarm
-toggles.FarmTween = addToggle(pageHalloween, "Auto Farm Pumpkin [ Tween ]", false, function(v)
-	State.FarmTween = v
-	if v and State.FarmBypass and toggles.FarmBypass then toggles.FarmBypass.Set(false) end
-	State.FarmPumpkin = State.FarmTween or State.FarmBypass
-end)
-toggles.FarmBypass = addToggle(pageHalloween, "Auto Farm Pumpkin [ Bypass ]", false, function(v)
-	State.FarmBypass = v
-	if v and State.FarmTween and toggles.FarmTween then toggles.FarmTween.Set(false) end
-	State.FarmPumpkin = State.FarmTween or State.FarmBypass
-end)
-toggles.FarmNPC = addToggle(pageHalloween, "Auto Farm Pumpkin NPCs", false, function(v) State.FarmNPC = v end)
-addSlider(pageHalloween, "NPC search range", 20, 5000, State.FarmNPCRange, function(v) State.FarmNPCRange = v end, " m")
-addSlider(pageHalloween, "NPC hover height", 2, 30, State.FarmNPCHeight, function(v) State.FarmNPCHeight = v end, " st")
-addInput(pageHalloween, "NPC name filter", "lantern", function(v) State.FarmNPCName = v end, "names, comma separated")
-toggles.FarmEquip = addToggle(pageHalloween, "Auto equip weapon", true, function(v) State.FarmEquip = v end,
-	"Equips the first tool from your backpack while farming")
-toggles.FarmPatch = addToggle(pageHalloween, "Auto farm PumpkinPatch", false, function(v) State.FarmPatch = v end,
-	"Uses the Tween / Bypass mode that is switched on above")
-addSlider(pageHalloween, "Farm speed", 20, 500, State.FarmSpeed, function(v) State.FarmSpeed = v end, " st/s")
-addSlider(pageHalloween, "Farm search range", 50, 100000, State.FarmRange, function(v) State.FarmRange = v end, " m")
+local setFarm2 = addInfo(pageHalloween, "Farm status")
+setFarm2("Off")
+Ext.Farm.setStatus2 = setFarm2
+toggles.FarmPumpkin = addToggle(pageHalloween, "Auto Farm Pumpkin", false, function(v)
+	State.FarmPumpkin = v
+	if v then offTargetFarms() end
+end, "Flies to every Pumpkin and clicks it (Tween / Bypass: Farm tab)")
+toggles.FarmNPC = addToggle(pageHalloween, "Auto Farm Pumpkin NPCs", false, function(v)
+	State.FarmNPC = v
+	if v then offTargetFarms() end
+end, "Kills the NPCs that appear after a pumpkin")
+toggles.FarmPatch = addToggle(pageHalloween, "Auto farm PumpkinPatch", false, function(v)
+	State.FarmPatch = v
+	if v then offTargetFarms() end
+end, "Flies to every PumpkinPatch and clicks it")
+addSlider(pageHalloween, "Pumpkin search range", 50, 100000, State.FarmRange, function(v) State.FarmRange = v end, " m")
 addSlider(pageHalloween, "Time at each object", 1, 30, State.FarmStay, function(v) State.FarmStay = v end, " s")
 addSlider(pageHalloween, "Skip time after visit", 5, 300, State.FarmCool, function(v) State.FarmCool = v end, " s")
-addSlider(pageHalloween, "Farm clicks per second", 1, 30, State.FarmCPS, function(v) State.FarmCPS = v end)
-toggles.FarmLook = addToggle(pageHalloween, "Look at object", true, function(v) State.FarmLook = v end,
-	"Turns the camera to the object so the click hits it")
+addSlider(pageHalloween, "NPC search range", 20, 5000, State.FarmNPCRange, function(v) State.FarmNPCRange = v end, " m")
+addInput(pageHalloween, "NPC name filter", "lantern", function(v) State.FarmNPCName = v end, "names, comma separated")
 toggles.FarmSkipHidden = addToggle(pageHalloween, "Skip hidden objects", false, function(v) State.FarmSkipHidden = v end,
 	"Ignores objects that are invisible (already collected)")
 
@@ -5736,6 +6893,7 @@ toggles.DoorESP = addToggle(pageHalloween, "HalloweenDoor ESP", false, function(
 	"Marks every object named \"HalloweenDoor\"")
 toggles.DoorWall = addToggle(pageHalloween, "HalloweenDoor through walls", true, function(v) State.DoorWall = v end)
 addSlider(pageHalloween, "HalloweenDoor distance", 20, 100000, State.DoorDist, function(v) State.DoorDist = v end, " m")
+
 addSection(pageHalloween, "Colors")
 addColor(pageHalloween, "Pumpkin color", espColors.Pumpkin, function(c) espColors.Pumpkin = c end)
 addColor(pageHalloween, "PumpkinPatch color", espColors.Patch, function(c) espColors.Patch = c end)
@@ -5817,6 +6975,7 @@ task.spawn(function()
 		end
 	end
 	loading = false
+	Ext.applyLang()
 	runAutoSpawn()
 
 	task.spawn(function()
@@ -5844,9 +7003,11 @@ local function overMenu(mp)
 	return mp.X >= p.X and mp.X <= p.X + s.X and mp.Y >= p.Y and mp.Y <= p.Y + s.Y
 end
 
-local function gameClick()
+-- clicks exactly where the mouse cursor is. The cursor is NEVER moved: the farm turns the camera
+-- so the cursor already points at the target (Ext.pointCursorAt).
+local function cursorClick()
 	local mp = UIS:GetMouseLocation()
-	if overMenu(mp) then return end
+	if overMenu(mp) then return false end
 	if okVIM then
 		local ok = pcall(function()
 			VIM:SendMouseButtonEvent(mp.X, mp.Y, 0, true, game, 0)
@@ -5855,19 +7016,30 @@ local function gameClick()
 			task.delay(0.03, function()
 				pcall(function() VIM:SendMouseButtonEvent(mp.X, mp.Y, 0, false, game, 0) end)
 			end)
-			return
+			return true
 		end
 	end
+	return false
+end
+
+local function gameClick()
+	local mp = UIS:GetMouseLocation()
+	if overMenu(mp) then return end
+	if cursorClick() then return end
 	pcall(function() VirtualUser:ClickButton1(mp, camera.CFrame) end)
 	local tool = player.Character and player.Character:FindFirstChildOfClass("Tool")
 	if tool then tool:Activate() end
 end
 
--- AUTO FARM (Pumpkin / PumpkinPatch)
--- The character flies (through walls) to the nearest object, hovers above it and clicks it:
--- ClickDetector / ProximityPrompt if the object has one (executor functions), plus a real mouse
--- click on the object (the camera turns to it). After "Time at each object" it goes to the next
--- one and skips the visited object for "Skip time after visit".
+-- AUTO FARM ENGINE
+-- One engine, four modes (the first one that is switched on wins):
+--   Factory  : flies to SmileFactory > Core > Part and hits it
+--   Pirates  : flies to the pirate base (Ext.PirateCF) and kills the NPCs around it
+--   Nearest  : flies to the nearest NPC (distance + name filter) and hits it
+--   Halloween: Pumpkin / PumpkinPatch objects and the NPCs that appear after them
+-- Movement: Tween = the position is moved smoothly step by step, Bypass = only velocity is used.
+-- Attack: the camera is turned so the cursor points at the target, then the game gets a normal
+-- click at the cursor (the cursor does not jump anywhere) and the equipped Tool is activated.
 do -- BLOCK
 local Farm = Ext.Farm
 local fcd = fireclickdetector
@@ -5896,7 +7068,7 @@ local function interactables(inst)
 	return c
 end
 
-local function doClick(inst)
+local function fireDetectors(inst)
 	local c = interactables(inst)
 	if fcd then
 		for _, cd in ipairs(c.cds) do pcall(fcd, cd) end
@@ -5906,21 +7078,19 @@ local function doClick(inst)
 			if pp.Enabled then pcall(fpp, pp) end
 		end
 	end
-	local pos = Ext.posOf(inst)
-	if pos and okVIM then
-		local sp, on = camera:WorldToViewportPoint(pos)
-		if on and sp.Z > 0 then
-			local mp = Vector2.new(sp.X, sp.Y)
-			if not overMenu(mp) then
-				pcall(function() VIM:SendMouseButtonEvent(mp.X, mp.Y, 0, true, game, 0) end)
-				task.delay(0.03, function()
-					pcall(function() VIM:SendMouseButtonEvent(mp.X, mp.Y, 0, false, game, 0) end)
-				end)
-			end
-		end
-	end
+end
+
+local function activateTool()
 	local tool = player.Character and player.Character:FindFirstChildOfClass("Tool")
 	if tool then pcall(function() tool:Activate() end) end
+end
+
+-- one attack / click on a world position (inst = object with ClickDetector / ProximityPrompt, optional)
+local function attackAt(pos, inst)
+	if State.FarmLook and pos then Ext.pointCursorAt(pos) end
+	cursorClick()
+	activateTool()
+	if inst then fireDetectors(inst) end
 end
 
 local function isHidden(inst)
@@ -5928,7 +7098,12 @@ local function isHidden(inst)
 	return p ~= nil and p.Transparency >= 0.95
 end
 
-local function pick(origin)
+local function status(s)
+	if Farm.setStatus then Farm.setStatus(s) end
+	if Farm.setStatus2 then Farm.setStatus2(s) end
+end
+
+local function pickObject(origin)
 	local best, bd, bcat
 	local now = os.clock()
 	for _, cat in ipairs({ "Pumpkin", "Patch" }) do
@@ -5953,10 +7128,6 @@ local function pick(origin)
 	return best, bcat
 end
 
-local function status(s)
-	if Farm.setStatus then Farm.setStatus(s) end
-end
-
 function Farm.start()
 	Farm.active = true
 	Farm.target, Farm.nearT, Farm.clickAcc = nil, 0, 0
@@ -5972,6 +7143,7 @@ function Farm.stop()
 	Farm.active = false
 	Farm.target = nil
 	Farm.hold = nil
+	Farm.mode = nil
 	farmPos = nil
 	local hum, root = getHumanoid(), getRoot()
 	if hum and not State.Fly then hum.PlatformStand = false end
@@ -6012,54 +7184,41 @@ local function isGiver(m)
 end
 
 -- name filter: words separated by commas, an NPC is taken if its name contains any of them.
--- Empty filter = "lantern" (Jack o' Lantern), so nothing else gets aggro.
-local function parseFilter()
-	local raw = string.lower(tostring(State.FarmNPCName or ""))
+-- Returns nil when there is no filter (= any NPC).
+local function parseWords(raw, default)
 	local list = {}
-	for w in raw:gmatch("[^,]+") do
+	for w in string.lower(tostring(raw or "")):gmatch("[^,]+") do
 		w = w:gsub("^%s+", ""):gsub("%s+$", "")
 		if w ~= "" then list[#list + 1] = w end
 	end
-	if #list == 0 then list[1] = "lantern" end
+	if #list == 0 then
+		if default then list[1] = default else return nil end
+	end
 	return list
 end
 
-local function pickNPC(origin)
-	local words = parseFilter()
+local function nameMatches(t, words)
+	if not words then return true end
+	local ln, dn = string.lower(t.model.Name), string.lower(t.name)
+	for _, w in ipairs(words) do
+		if string.find(ln, w, 1, true) or string.find(dn, w, 1, true) then return true end
+	end
+	return false
+end
+
+-- nearest (to `origin`) NPC whose distance to `center` is at most `range`
+local function pickNPC(origin, center, range, words)
 	local best, bd
 	local now = os.clock()
 	for _, t in ipairs(collectTargets(true)) do
-		if t.isNPC and not (Farm.black[t.model] and Farm.black[t.model] > now) then
-			local ln, ok = string.lower(t.model.Name), false
-			local dn = string.lower(t.name)
-			for _, w in ipairs(words) do
-				if string.find(ln, w, 1, true) or string.find(dn, w, 1, true) then
-					ok = true
-					break
-				end
-			end
-			if ok and not isGiver(t.model) then
+		if t.isNPC and not (Farm.black[t.model] and Farm.black[t.model] > now) and nameMatches(t, words) then
+			if (t.root.Position - center).Magnitude <= range and not isGiver(t.model) then
 				local d = (t.root.Position - origin).Magnitude
-				if d <= State.FarmNPCRange and (not bd or d < bd) then best, bd = t, d end
+				if not bd or d < bd then best, bd = t, d end
 			end
 		end
 	end
 	return best
-end
-
-local function attackNPC(pos)
-	if okVIM then
-		local sp, on = camera:WorldToViewportPoint(pos)
-		local mp = (on and sp.Z > 0) and Vector2.new(sp.X, sp.Y) or UIS:GetMouseLocation()
-		if not overMenu(mp) then
-			pcall(function() VIM:SendMouseButtonEvent(mp.X, mp.Y, 0, true, game, 0) end)
-			task.delay(0.03, function()
-				pcall(function() VIM:SendMouseButtonEvent(mp.X, mp.Y, 0, false, game, 0) end)
-			end)
-		end
-	end
-	local tool = player.Character and player.Character:FindFirstChildOfClass("Tool")
-	if tool then pcall(function() tool:Activate() end) end
 end
 
 local function autoEquip(hum)
@@ -6070,14 +7229,47 @@ local function autoEquip(hum)
 	if tool then pcall(function() hum:EquipTool(tool) end) end
 end
 
+-- SmileFactory > Core > Part
+local function findFactoryPart(origin)
+	local best, bd
+	for inst in pairs(Ext.found.Factory) do
+		if not inst:IsDescendantOf(workspace) then
+			Ext.found.Factory[inst] = nil
+		else
+			local core = inst:FindFirstChild("Core")
+			local part = core and core:FindFirstChild("Part")
+			if part and part:IsA("BasePart") then
+				local d = (part.Position - origin).Magnitude
+				if not bd or d < bd then best, bd = part, d end
+			end
+		end
+	end
+	return best
+end
+
 function Farm.step(dt)
-	local want = State.FarmPumpkin or State.FarmPatch or State.FarmNPC
+	local mode
+	if State.FactoryFarm then
+		mode = "Factory"
+	elseif State.PirateFarm then
+		mode = "Pirate"
+	elseif State.NearNPC then
+		mode = "Near"
+	elseif State.FarmPumpkin or State.FarmPatch or State.FarmNPC then
+		mode = "Hall"
+	end
 	local root, hum = getRoot(), getHumanoid()
-	if not want or not root or not hum or hum.Health <= 0 then
+	if not mode or not root or not hum or hum.Health <= 0 then
 		Farm.stop()
 		return
 	end
 	if not Farm.active then Farm.start() end
+	if Farm.mode ~= mode then
+		Farm.mode = mode
+		Farm.target = nil
+		Farm.hold = nil
+		Farm.nearT, Farm.clickAcc = 0, 0
+	end
 	local bypass = State.FarmBypass
 	if bypass or not farmPos or (root.Position - farmPos).Magnitude > 10 then farmPos = root.Position end
 
@@ -6104,38 +7296,152 @@ function Farm.step(dt)
 	end
 
 	if State.FarmEquip then autoEquip(hum) end
+	hum.PlatformStand = true
 
-	local t = Farm.target
-	if t and t.cat == "NPC" then
-		if not State.FarmNPC or not npcAlive(t.model) or not t.root.Parent then
-			t = nil
-			Farm.target = nil
-		elseif os.clock() - t.t0 > 30 then
+	local function hold(text)
+		Farm.hold = Farm.hold or root.Position
+		drive(Farm.hold, 50)
+		status(text)
+	end
+
+	-- fly above an NPC and hit it; returns false when the target is gone
+	local function chaseNPC(t, label)
+		local npcPos = t.root.Position
+		local d = drive(npcPos + Vector3.new(0, State.FarmNPCHeight, 0), State.FarmSpeed)
+		status(string.format("%s %s (%d m)", L(label), t.name, math.floor(d)))
+		if State.FarmLook then Ext.pointCursorAt(npcPos) end
+		if d < 14 then
+			Farm.clickAcc += dt
+			if Farm.clickAcc >= 1 / State.FarmCPS then
+				Farm.clickAcc = 0
+				attackAt(npcPos, nil)
+			end
+		end
+	end
+
+	-- keep / drop an NPC target
+	local function validNPC(t, still)
+		if not still or not npcAlive(t.model) or not t.root.Parent then return false end
+		if os.clock() - t.t0 > 30 then
 			Farm.black[t.model] = os.clock() + 20
+			return false
+		end
+		return true
+	end
+
+	Farm.scanT = (Farm.scanT or 0) + dt
+	local t = Farm.target
+
+	-- FACTORY ---------------------------------------------------------------------------------
+	if mode == "Factory" then
+		local part = t and t.part
+		if not (part and part.Parent) then
+			part = nil
+			if Farm.scanT >= 0.5 then
+				Farm.scanT = 0
+				part = findFactoryPart(farmPos)
+				Farm.target = part and { part = part } or nil
+			end
+		end
+		if not part then
+			hold("Factory not found (get closer)")
+			return
+		end
+		Farm.hold = nil
+		local pos = part.Position
+		local d = drive(pos + Vector3.new(0, State.FactoryHeight, 0), State.FarmSpeed)
+		status(string.format("%s (%d m)", L("Hitting the factory"), math.floor(d)))
+		if State.FarmLook then Ext.pointCursorAt(pos) end
+		if d < 14 then
+			Farm.clickAcc += dt
+			if Farm.clickAcc >= 1 / State.FarmCPS then
+				Farm.clickAcc = 0
+				attackAt(pos, part)
+			end
+		end
+		return
+	end
+
+	-- PIRATES ---------------------------------------------------------------------------------
+	if mode == "Pirate" then
+		local base = Ext.PirateCF.Position
+		if t and not validNPC(t, t.cat == "NPC") then
 			t = nil
 			Farm.target = nil
 		end
-	elseif t and (not t.inst:IsDescendantOf(workspace) or (State.FarmSkipHidden and isHidden(t.inst))) then
+		local atBase = (farmPos - base).Magnitude < 90
+		if not t and atBase and Farm.scanT >= 0.4 then
+			Farm.scanT = 0
+			local n = pickNPC(farmPos, base, State.PirateRange, parseWords(State.PirateName, nil))
+			if n then
+				t = { cat = "NPC", model = n.model, root = n.root, name = n.name, t0 = os.clock() }
+				Farm.target = t
+				Farm.clickAcc = 0
+			end
+		end
+		if t then
+			Farm.hold = nil
+			chaseNPC(t, "Attacking")
+		elseif not atBase then
+			Farm.hold = nil
+			local d = drive(base, State.FarmSpeed)
+			status(string.format("%s (%d m)", L("Flying to the pirate base"), math.floor(d)))
+		else
+			Farm.hold = nil
+			drive(base, 60)
+			status("Waiting for pirates")
+		end
+		return
+	end
+
+	-- NEAREST NPCs ----------------------------------------------------------------------------
+	if mode == "Near" then
+		if t and not validNPC(t, t.cat == "NPC" and (t.root.Position - farmPos).Magnitude <= State.NearRange + 50) then
+			t = nil
+			Farm.target = nil
+		end
+		if not t and Farm.scanT >= 0.4 then
+			Farm.scanT = 0
+			local n = pickNPC(farmPos, farmPos, State.NearRange, parseWords(State.NearName, nil))
+			if n then
+				t = { cat = "NPC", model = n.model, root = n.root, name = n.name, t0 = os.clock() }
+				Farm.target = t
+				Farm.clickAcc = 0
+			end
+		end
+		if not t then
+			hold("Waiting for NPCs")
+			return
+		end
+		Farm.hold = nil
+		chaseNPC(t, "Attacking")
+		return
+	end
+
+	-- HALLOWEEN -------------------------------------------------------------------------------
+	if t and t.cat == "NPC" then
+		if not State.FarmNPC or not validNPC(t, true) then
+			t = nil
+			Farm.target = nil
+		end
+	elseif t and (not t.inst or not t.inst:IsDescendantOf(workspace) or (State.FarmSkipHidden and isHidden(t.inst))) then
 		t = nil
 		Farm.target = nil
 	end
 
 	-- NPCs that appear after a pumpkin is killed have priority over the next pumpkin
-	if State.FarmNPC and not (t and t.cat == "NPC") then
-		Farm.scanT = (Farm.scanT or 0) + dt
-		if Farm.scanT >= 0.4 then
-			Farm.scanT = 0
-			local n = pickNPC(farmPos)
-			if n then
-				t = { cat = "NPC", model = n.model, root = n.root, name = n.name, t0 = os.clock() }
-				Farm.target = t
-				Farm.nearT, Farm.clickAcc = 0, 0
-			end
+	if State.FarmNPC and not (t and t.cat == "NPC") and Farm.scanT >= 0.4 then
+		Farm.scanT = 0
+		local n = pickNPC(farmPos, farmPos, State.FarmNPCRange, parseWords(State.FarmNPCName, "lantern"))
+		if n then
+			t = { cat = "NPC", model = n.model, root = n.root, name = n.name, t0 = os.clock() }
+			Farm.target = t
+			Farm.nearT, Farm.clickAcc = 0, 0
 		end
 	end
 
 	if not t and (State.FarmPumpkin or State.FarmPatch) then
-		local inst, cat = pick(farmPos)
+		local inst, cat = pickObject(farmPos)
 		if inst then
 			t = { inst = inst, cat = cat }
 			Farm.nearT, Farm.clickAcc = 0, 0
@@ -6143,34 +7449,14 @@ function Farm.step(dt)
 		end
 	end
 
-	hum.PlatformStand = true
-
 	if not t then
-		-- nothing to do: hold the current spot (never fall through the map)
-		Farm.hold = Farm.hold or root.Position
-		drive(Farm.hold, 50)
-		status("Waiting for objects")
+		hold("Waiting for objects")
 		return
 	end
 	Farm.hold = nil
 
 	if t.cat == "NPC" then
-		local npcPos = t.root.Position
-		local d = drive(npcPos + Vector3.new(0, State.FarmNPCHeight, 0), State.FarmSpeed)
-		status(string.format("Attacking %s (%d m)", t.name, math.floor(d)))
-		if d < 14 then
-			Farm.clickAcc += dt
-			if Farm.clickAcc >= 1 / State.FarmCPS then
-				Farm.clickAcc = 0
-				attackNPC(npcPos)
-			end
-		end
-		if State.FarmLook then
-			local cp = camera.CFrame.Position
-			if (npcPos - cp).Magnitude > 1 then
-				camera.CFrame = camera.CFrame:Lerp(CFrame.lookAt(cp, npcPos), math.clamp(dt * 12, 0, 1))
-			end
-		end
+		chaseNPC(t, "Attacking")
 		return
 	end
 
@@ -6179,26 +7465,20 @@ function Farm.step(dt)
 		Farm.target = nil
 		return
 	end
-	local tp = objPos + Vector3.new(0, 3, 0)
 	local label = t.cat == "Patch" and "PumpkinPatch" or "Pumpkin"
-	local dist = drive(tp, State.FarmSpeed)
+	local dist = drive(objPos + Vector3.new(0, 3, 0), State.FarmSpeed)
 
 	if dist > 3 then
 		Farm.nearT = 0
-		status(string.format("Flying to %s (%d m)", label, math.floor(dist)))
+		status(string.format("%s %s (%d m)", L("Flying to"), label, math.floor(dist)))
 	else
 		Farm.nearT += dt
 		Farm.clickAcc += dt
-		status(string.format("Clicking %s (%.1f s)", label, Farm.nearT))
+		status(string.format("%s %s (%.1f s)", L("Clicking"), label, Farm.nearT))
+		if State.FarmLook then Ext.pointCursorAt(objPos) end
 		if Farm.clickAcc >= 1 / State.FarmCPS then
 			Farm.clickAcc = 0
-			doClick(t.inst)
-		end
-		if State.FarmLook then
-			local cp = camera.CFrame.Position
-			if (objPos - cp).Magnitude > 1 then
-				camera.CFrame = camera.CFrame:Lerp(CFrame.lookAt(cp, objPos), math.clamp(dt * 10, 0, 1))
-			end
+			attackAt(objPos, t.inst)
 		end
 		if Farm.nearT >= State.FarmStay then
 			Farm.black[t.inst] = os.clock() + State.FarmCool
@@ -6286,6 +7566,7 @@ end)
 end -- BLOCK
 
 -- LOOPS AND INPUT
+do -- BLOCK
 local wasSpeed, wasJump = false, false
 local lastSafe
 local clickAcc = 0
@@ -6428,7 +7709,7 @@ task.spawn(function()
 		syncESP()
 
 		if State.Info then
-			infoLabel.Text = string.format("FPS %d   •   Ping %d ms   •   Players %d",
+			infoLabel.Text = string.format("FPS %d   •   Ping %d ms   •   " .. L("Players") .. " %d",
 				math.floor(fps), math.floor(player:GetNetworkPing() * 1000), #Players:GetPlayers())
 		end
 		task.wait(0.5)
@@ -6439,14 +7720,6 @@ connect(UIS.JumpRequest, function()
 	if State.InfJump then
 		local hum = getHumanoid()
 		if hum then hum:ChangeState(Enum.HumanoidStateType.Jumping) end
-	end
-end)
-
-connect(mouse.Button1Down, function()
-	local mod = toKey(Binds.ClickTP)
-	if State.ClickTP and (not mod or UIS:IsKeyDown(mod)) then
-		local root = getRoot()
-		if root and mouse.Hit then root.CFrame = CFrame.new(mouse.Hit.Position + Vector3.new(0, 3, 0)) end
 	end
 end)
 
@@ -6534,5 +7807,6 @@ local function onCharacter(char)
 end
 connect(player.CharacterAdded, onCharacter)
 if player.Character then task.spawn(onCharacter, player.Character) end
+end -- BLOCK
 
-notify("Forgotten Script loaded. Press " .. Binds.Menu .. " to hide / show", 4)
+notify(L("Forgotten Script loaded. Press ") .. Binds.Menu .. L(" to hide / show"), 4)
